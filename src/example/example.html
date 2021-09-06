@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1 user-scalable=no"
+    />
+    <title>Vite Example</title>
+  </head>
+  <body style="opacity: 0">
+    <button id="connect-wallet">connect</button>
+    <div id="connected-container" class="hidden">
+      <form>
+        <div class="mb-2">
+          <div>account:</div>
+          <div><span id="account-label"></span></div>
+        </div>
+        <div class="mb-6">
+          <div>balance:</div>
+          <div><span id="balance-label"></span> vite</div>
+        </div>
+        <div class="mb-2">
+          <label for="address">address:</label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            placeholder="enter address..."
+            required
+            value=""
+            class="w-full"
+          />
+        </div>
+        <div class="mb-2">
+          <label for="amount">amount:</label>
+          <input
+            id="amount"
+            name="amount"
+            type="number"
+            placeholder="enter amount..."
+            required
+            value=""
+          />
+        </div>
+        <div>
+          <button type="submit">send</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
