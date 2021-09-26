@@ -27,6 +27,29 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 
     $ make pack
 
+# Features
+
+### Popup
+
+- [x] Create account
+- [x] Import account
+- [x] Add accounts in same derivation path scheme
+- [ ] Network switch. Support mainnet and testnet.
+- [x] Export private key
+- [x] Export mnemonic
+- [ ] Add custom tokens
+
+### Injected script
+
+- [x] Request connected accounts
+- [x] Request connect new account + domain
+- [x] Request createAccountBlock request
+- [ ] Emit popup account changes
+
+### Background
+
+- [x] Load and subsribe to current account VITE balances
+
 ## Demo walk-through
 
 https://youtu.be/JmufcGt_pic
