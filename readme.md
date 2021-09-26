@@ -54,6 +54,10 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 
 https://youtu.be/JmufcGt_pic
 
+## Docs
+
+https://0xkarl.github.io/vite-extension/getting-started/introduction.html
+
 ## Resources
 
 - https://docs.vite.org/go-vite/tutorial/sppguide/introduction/installation.html
