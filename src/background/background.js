@@ -1,6 +1,9 @@
 import contentScript from './background-content-script';
 import popup from './background-popup';
 
+// receive messages from either content script or popup
+// process them and,
+// relay result back to the sender
 chrome.runtime.onMessage.addListener((message, sender, reply) => {
   onMessage(message, sender).then(reply);
   return true;

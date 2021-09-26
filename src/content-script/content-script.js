@@ -14,6 +14,9 @@ try {
 const CONTENT_SCRIPT = 'vite-contentscript';
 const IN_PAGE = 'vite-injectedscript';
 
+// setup a stream to process messages from injected script
+// relay them to background script for processing
+// pipe the result back to the background script
 const stream = new LocalMessageDuplexStream({
   name: CONTENT_SCRIPT,
   target: IN_PAGE,
@@ -22,6 +25,9 @@ const stream = new LocalMessageDuplexStream({
 stream.on('data', (request) => {
   const { id, method, jsonrpc } = request.data;
   console.log('--> %s', method);
+
+  // relay message to background script
+  // relay result to injected script
   chrome.runtime.sendMessage(request, (response) => {
     if (!(response && (response.result || response.error))) {
       return;
@@ -38,6 +44,8 @@ stream.on('data', (request) => {
   });
 });
 
+// receive messages from injected script and,
+// pipe them to the stream above
 chrome.runtime.onMessage.addListener((message, sender, reply) => {
   if (message?.target === 'vite-contentscript') {
     stream.write(message.data);

@@ -1,7 +1,7 @@
 # Vite Extension
 
 <div>
-    <img src="https://vite-extension.surge.sh/screenshot.png" alt="vite" width=200 />
+    <img src="https://vite-extension.surge.sh/screenshot.png" alt="vite" width=300 />
 </div>
 
 ## Getting started
@@ -27,7 +27,7 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 
     $ make pack
 
-## Demo walthrough
+## Demo walk-through
 
 https://youtu.be/JmufcGt_pic
 
@@ -35,4 +35,3 @@ https://youtu.be/JmufcGt_pic
 
 - https://docs.vite.org/go-vite/tutorial/sppguide/introduction/installation.html
 - https://docs.vite.org/vite.js/accountBlock/createAccountBlock.html
--
