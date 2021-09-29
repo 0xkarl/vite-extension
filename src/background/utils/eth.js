@@ -27,8 +27,16 @@ const TOKEN_CONTRACT_ADDRESSES = {
 };
 
 const LOCAL_CLIENT = new ViteAPI(new HTTP_RPC('http://127.0.0.1:23456'));
+const MAINNET_CLIENT = new ViteAPI(new HTTP_RPC('https://node.vite.net/gvite'));
+const TESTNET_CLIENT = new ViteAPI(
+  new HTTP_RPC('https://vitanode.lightcord.org/http')
+);
 
-const CLIENTS = { local: LOCAL_CLIENT };
+export const CLIENTS = {
+  local: LOCAL_CLIENT,
+  mainnet: MAINNET_CLIENT,
+  testnet: TESTNET_CLIENT,
+};
 
 let BALANCE_UNSUBS = [];
 

@@ -1,4 +1,3 @@
-import * as ethers from 'ethers';
 import { wallet, accountBlock } from '@vite/vitejs';
 import {
   store,
@@ -12,6 +11,7 @@ import {
   cachePendingTxn,
   cacheCompletedTxn,
   getTxBlockExplorerUrl,
+  CLIENTS,
 } from './utils';
 import { toBig } from '../popup/utils';
 
@@ -198,6 +198,7 @@ export default async ({ name, payload }) => {
       const { network } = store;
       return {
         network,
+        networks: Object.keys(CLIENTS),
       };
     }
 
@@ -382,7 +383,7 @@ export default async ({ name, payload }) => {
     case 'exportPrivateKey': {
       const { pass, address } = payload;
       if (pass !== store.password) {
-        throw new Error("Pass doesn't match");
+        throw new Error('Pass doesn\'t match');
       }
       const { mnemonic } = store;
       const addresses = cache('addresses');

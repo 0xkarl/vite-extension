@@ -8,7 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 
-import { send, sleep, NETWORKS, shortedAddress } from '../../utils';
+import { send, sleep, shortedAddress } from '../../utils';
 import { useVite } from '../../contexts/Vite';
 
 const useStyles = makeStyles(() => ({
@@ -44,7 +44,7 @@ function Header() {
     switchAccount,
   } = useVite();
 
-  const [{ copied, network, searchedAddresses }, _update] = useState({
+  const [{ copied, network, networks, searchedAddresses }, _update] = useState({
     searchedAddresses: [],
   });
 
@@ -166,7 +166,7 @@ function Header() {
 
             <div className={classes.sep}></div>
 
-            {NETWORKS.map((net) => (
+            {networks.map((net) => (
               <div
                 key={net}
                 className={clsx('cursor-pointer', {

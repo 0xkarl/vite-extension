@@ -29,6 +29,20 @@ async function main() {
 
   loadConnectedWallet();
 }
+
+async function loadConnectedWallet() {
+  if (!window.vite) {
+    return console.warn('window.vite not injected');
+  }
+  const [account] = await window.vite.request({
+    method: 'eth_accounts',
+  });
+  if (!account) {
+    return;
+  }
+  loadAccount(account);
+}
+
 async function onConnect() {
   if (!window.vite) {
     return console.warn('window.vite not injected');
@@ -39,6 +53,10 @@ async function onConnect() {
   if (!account) {
     return;
   }
+  loadAccount(account);
+}
+
+function loadAccount(account) {
   accountAddress = account;
   accountLabel.innerText = account;
   connectedContainer.classList.remove('hidden');
@@ -54,24 +72,6 @@ async function onSend(e) {
   const address = form.address.value;
 
   sendBalance(address, amount);
-}
-
-async function loadConnectedWallet() {
-  if (!window.vite) {
-    return console.warn('window.vite not injected');
-  }
-  const [account] = await window.vite.request({
-    method: 'eth_accounts',
-  });
-  if (!account) {
-    return;
-  }
-  accountAddress = account;
-  accountLabel.innerText = account;
-  connectedContainer.classList.remove('hidden');
-  connectButton.classList.add('hidden');
-
-  subscribeToAccountBalance(account);
 }
 
 async function subscribeToAccountBalance(accountAddress) {

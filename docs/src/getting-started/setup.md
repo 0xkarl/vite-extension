@@ -1,4 +1,4 @@
-## Getting started
+# Setup
 
 This guide will take you through setting up the extension in a local environment.
 
