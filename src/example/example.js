@@ -4,10 +4,8 @@ import BigNumber from 'bignumber.js';
 import './example.css';
 import CONTRACT_ABI from './data/HelloWorld.abi.json';
 
-const provider = new HTTP_RPC('http://127.0.0.1:23456');
-const client = new ViteAPI(provider);
-
-let connectedContainer,
+let client,
+  connectedContainer,
   connectButton,
   accountLabel,
   balanceLabel,
@@ -45,7 +43,7 @@ async function loadConnectedWallet() {
 
 async function onConnect() {
   if (!window.vite) {
-    return console.warn('window.vite not injected');
+    return alert('window.vite not injected');
   }
   const [account] = await window.vite.request({
     method: 'eth_requestAccounts',
@@ -56,13 +54,26 @@ async function onConnect() {
   loadAccount(account);
 }
 
-function loadAccount(account) {
+async function loadAccount(account) {
   accountAddress = account;
   accountLabel.innerText = account;
   connectedContainer.classList.remove('hidden');
   connectButton.classList.add('hidden');
 
+  await setupClient();
   subscribeToAccountBalance(account);
+}
+
+async function setupClient() {
+  const chainId = parseInt(
+    await window.vite.request({
+      method: 'eth_chainId',
+    })
+  );
+  const provider = new HTTP_RPC(
+    chainId === 1 ? 'https://node.vite.net/gvite' : 'http://127.0.0.1:23456'
+  );
+  client = new ViteAPI(provider);
 }
 
 async function onSend(e) {

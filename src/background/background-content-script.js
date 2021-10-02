@@ -1,5 +1,10 @@
 import qs from 'query-string';
-import { store, getDomainAccounts, getActiveTabId } from './utils';
+import {
+  store,
+  getDomainAccounts,
+  getActiveTabId,
+  getCurrentNetwork,
+} from './utils';
 
 export default async (message, sender) => {
   const { origin } = sender;
@@ -39,6 +44,16 @@ export default async (message, sender) => {
       return null; // noop
     }
 
+    case 'eth_chainId': {
+      const { chainId } = getCurrentNetwork();
+      return chainId;
+    }
+
+    case 'eth_networkVersion': {
+      const { networkVersion } = getCurrentNetwork();
+      return networkVersion;
+    }
+
     case 'eth_createAccountBlock': {
       const tx = params;
 
@@ -70,11 +85,12 @@ export default async (message, sender) => {
     }
 
     case 'metamask_getProviderState': {
+      const { chainId, networkVersion } = getCurrentNetwork();
       return {
         isUnlocked: !store.locked,
         accounts: getDomainAccounts(origin),
-        chainId: '0x1',
-        networkVersion: 'local',
+        chainId,
+        networkVersion,
       };
     }
 

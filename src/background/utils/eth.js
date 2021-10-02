@@ -28,14 +28,14 @@ const TOKEN_CONTRACT_ADDRESSES = {
 
 const LOCAL_CLIENT = new ViteAPI(new HTTP_RPC('http://127.0.0.1:23456'));
 const MAINNET_CLIENT = new ViteAPI(new HTTP_RPC('https://node.vite.net/gvite'));
-const TESTNET_CLIENT = new ViteAPI(
-  new HTTP_RPC('https://vitanode.lightcord.org/http')
-);
+// const TESTNET_CLIENT = new ViteAPI(
+//   new HTTP_RPC('https://vitanode.lightcord.org/http')
+// );
 
 export const CLIENTS = {
   local: LOCAL_CLIENT,
   mainnet: MAINNET_CLIENT,
-  testnet: TESTNET_CLIENT,
+  // testnet: TESTNET_CLIENT,
 };
 
 let BALANCE_UNSUBS = [];
@@ -283,4 +283,12 @@ export function getTxBlockExplorerUrl(hash, network) {
   network = network || store.network;
   // const subdomain = network === 'mainnet' ? '' : `${network}.`;
   return `https://explorer.vite.net/transaction/${hash}`;
+}
+
+export function getCurrentNetwork() {
+  const network = store.network;
+  return {
+    chainId: network === 'mainnet' ? '0x1' : '0x2', // todo
+    networkVersion: network, // todo
+  };
 }

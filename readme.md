@@ -65,6 +65,10 @@ To install a production ready build:
 - This should successfully load the extension, and you can now access it from the browser extension's toolbar.
 - For your safety, use a banner mnemonic phrase when importing a wallet for testing.
 
+## Demo dapp & contract
+
+- https://vite-extension.surge.sh/example.html
+- contract: 
 ## Docs
 
 https://0xkarl.github.io/vite-extension/getting-started/introduction.html

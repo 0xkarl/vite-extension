@@ -62,3 +62,25 @@ const result = await window.vite.request({
 ```
 
 <img src="https://vite-extension.surge.sh/app_screenshots/confirm_tx.png" alt="vite" width=300 />
+
+### eth_chainId
+
+Returns the `chainId` of the current network as a hexadecimal. `0x1` (`1`) means mainnet.
+
+```js
+const chainIdHex = await window.vite.request({
+  method: 'eth_chainId',
+}); // 0x1
+console.log(parseInt(chainIdHex)); // 1
+```
+
+### eth_networkVersion
+
+Returns the `networkVersion` of the current network. Always prefer `chainId` above, over `networkVersion`.
+
+```js
+const networkVersion = await window.vite.request({
+  method: 'eth_networkVersion',
+});
+console.log(networkVersion); // mainnet
+```
