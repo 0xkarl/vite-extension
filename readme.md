@@ -54,6 +54,17 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 
 https://youtu.be/JmufcGt_pic
 
+## Production builds
+
+To install a production ready build:
+- Download the latest release from the [releases](https://github.com/0xkarl/vite-extension/releases) section. 
+- Unzip the download.
+- Head over to the Chrome extension section (`chrome://extensions/`) and enable `Developer mode`.
+- Click `Load unpacked`.
+- Select the unzipped folder of the build.
+- This should successfully load the extension, and you can now access it from the browser extension's toolbar.
+- For your safety, use a banner mnemonic phrase when importing a wallet for testing.
+
 ## Docs
 
 https://0xkarl.github.io/vite-extension/getting-started/introduction.html
