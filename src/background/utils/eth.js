@@ -46,7 +46,7 @@ store.tokens = SYMBOLS.map((symbol) => ({
   image: TOKEN_IMAGES[symbol],
 }));
 
-switchNetwork(cache('network') || 'local');
+switchNetwork(cache('network') || 'mainnet');
 
 export function switchNetwork(network) {
   store.network = network;
@@ -102,7 +102,7 @@ async function loadBalance(symbol) {
   let balance;
   if (symbol === 'VITE') {
     const balanceInfo = await store.client.getBalanceInfo(address);
-    balance = !balanceInfo.balance.balanceInfoMap
+    balance = !balanceInfo?.balance?.balanceInfoMap
       ? toBig(0)
       : Object.values(balanceInfo.balance.balanceInfoMap).reduce(
           (balance, entry) => balance.plus(toBig(entry.balance)),

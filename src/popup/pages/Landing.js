@@ -38,7 +38,6 @@ function Landing() {
     { isLoaded, totalUSDBalance, tokens, balances, usdBalances },
     _update,
   ] = useState({});
-
   const update = (a) => _update((b) => ({ ...b, ...a }));
 
   useEffect(() => {

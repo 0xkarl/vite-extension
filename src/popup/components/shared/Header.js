@@ -46,6 +46,7 @@ function Header() {
 
   const [{ copied, network, networks, searchedAddresses }, _update] = useState({
     searchedAddresses: [],
+    networks: [],
   });
 
   const update = (a) => _update((b) => ({ ...b, ...a }));
