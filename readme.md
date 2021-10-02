@@ -63,7 +63,7 @@ To install a production ready build:
 - Click `Load unpacked`.
 - Select the unzipped folder of the build.
 - This should successfully load the extension, and you can now access it from the browser extension's toolbar.
-- For your safety, use a banner mnemonic phrase when importing a wallet for testing.
+- For your safety, use a burner mnemonic phrase/account when importing a wallet for testing.
 
 ## Demo dapp & contract
 
