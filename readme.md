@@ -44,7 +44,7 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 - [x] Request connected accounts
 - [x] Request connect new account + domain
 - [x] Request createAccountBlock request
-- [ ] Emit popup account changes
+- [ ] Emit popup changes: account, chain etc
 
 ### Background
 
@@ -68,7 +68,9 @@ To install a production ready build:
 ## Demo dapp & contract
 
 - https://vite-extension.surge.sh/example.html
-- contract: todo
+- contracts:
+    - mainnet: vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3
+    - testnet: vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8
 ## Docs
 
 https://0xkarl.github.io/vite-extension/getting-started/introduction.html

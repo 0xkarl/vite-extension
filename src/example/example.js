@@ -8,6 +8,7 @@ let client,
   chainId,
   connectedContainer,
   connectButton,
+  networkLabel,
   accountLabel,
   balanceLabel,
   form,
@@ -19,6 +20,7 @@ async function main() {
   document.body.style.opacity = 1;
   connectedContainer = document.getElementById('connected-container');
   connectButton = document.getElementById('connect-wallet');
+  networkLabel = document.getElementById('network-label');
   accountLabel = document.getElementById('account-label');
   balanceLabel = document.getElementById('balance-label');
   form = document.querySelector('form');
@@ -71,8 +73,14 @@ async function setupClient() {
       method: 'eth_chainId',
     })
   );
+  networkLabel.innerText =
+    chainId === 1 ? 'mainnet' : chainId === 2 ? 'testnet' : 'local';
   const provider = new HTTP_RPC(
-    chainId === 1 ? 'https://node.vite.net/gvite' : 'http://127.0.0.1:23456'
+    chainId === 1
+      ? 'https://node.vite.net/gvite'
+      : chainId === 2
+      ? 'https://buidl.vite.net/gvite'
+      : 'http://127.0.0.1:23456'
   );
   client = new ViteAPI(provider);
 }
@@ -113,7 +121,9 @@ async function sendBalance(toAddress, amount) {
 
   const smartContractAddress =
     chainId === 1
-      ? ''
+      ? 'vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3'
+      : chainId === 2
+      ? 'vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8'
       : 'vite_0e56e42f1fa342647b877d37cd02f64b388b1b307820f26098';
 
   const result = await window.vite.request({
