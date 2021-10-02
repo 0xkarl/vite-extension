@@ -5,6 +5,7 @@ import './example.css';
 import CONTRACT_ABI from './data/HelloWorld.abi.json';
 
 let client,
+  chainId,
   connectedContainer,
   connectButton,
   accountLabel,
@@ -65,7 +66,7 @@ async function loadAccount(account) {
 }
 
 async function setupClient() {
-  const chainId = parseInt(
+  chainId = parseInt(
     await window.vite.request({
       method: 'eth_chainId',
     })
@@ -111,7 +112,9 @@ async function sendBalance(toAddress, amount) {
   console.log('sending', { fromAdress: accountAddress, toAddress, amount });
 
   const smartContractAddress =
-    'vite_0e56e42f1fa342647b877d37cd02f64b388b1b307820f26098';
+    chainId === 1
+      ? ''
+      : 'vite_0e56e42f1fa342647b877d37cd02f64b388b1b307820f26098';
 
   const result = await window.vite.request({
     method: 'eth_createAccountBlock',

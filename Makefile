@@ -1,3 +1,5 @@
+o?=$(o)
+
 start:
 	@npm run $@
 
@@ -16,8 +18,12 @@ deploy:
 	@$(MAKE) build
 	@surge -d vite-extension.surge.sh dist
 
+release:
+	@./bin/release.sh $o
+
 .PHONY: \
 	start \
 	build \
 	pack \
-	deploy
+	deploy \
+	release

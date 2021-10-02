@@ -68,7 +68,7 @@ To install a production ready build:
 ## Demo dapp & contract
 
 - https://vite-extension.surge.sh/example.html
-- contract: 
+- contract: todo
 ## Docs
 
 https://0xkarl.github.io/vite-extension/getting-started/introduction.html
