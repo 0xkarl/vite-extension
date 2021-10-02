@@ -34,7 +34,7 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 - [x] Create account
 - [x] Import account
 - [x] Add accounts in same derivation path scheme
-- [ ] Network switch. Support mainnet and testnet.
+- [x] Network switch. Support mainnet and testnet.
 - [x] Export private key
 - [x] Export mnemonic
 - [ ] Add custom tokens

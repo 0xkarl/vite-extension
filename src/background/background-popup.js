@@ -68,6 +68,8 @@ export default async ({ name, payload }) => {
       cache('addresses', addresses);
       cache('addressesInfo', addressesInfo);
 
+      setupBalances();
+
       return {
         locked: store.locked,
         address: store.wallet.address,
@@ -101,6 +103,8 @@ export default async ({ name, payload }) => {
       cache('currentAccountIndex', currentAccountIndex);
       cache('addresses', addresses);
       cache('addressesInfo', addressesInfo);
+
+      setupBalances();
 
       return {
         locked: store.locked,
