@@ -1,5 +1,5 @@
 export * from './cache';
-export * from './eth';
+export * from './vite';
 export * from './store';
 export * from './bn';
 export * from './chrome';

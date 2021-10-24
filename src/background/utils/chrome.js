@@ -1,5 +1,5 @@
 import { store } from './store';
-import { unsubscribePort } from './eth';
+import { unsubscribePort } from './vite';
 
 let PORT;
 chrome.extension.onConnect.addListener(onConnect);

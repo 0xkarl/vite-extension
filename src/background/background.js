@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
 });
 
 async function onMessage(message, sender) {
-  console.log('--');
+  console.log('---');
   try {
     if (message?.name === 'metamask-provider') {
       return { result: await contentScript(message, sender) };

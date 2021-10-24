@@ -64,7 +64,7 @@ async function loadAccount(account) {
   connectButton.classList.add('hidden');
 
   await setupClient();
-  subscribeToAccountBalance(account);
+  subscribeToAccountBalanceChanges(account);
 }
 
 async function setupClient() {
@@ -94,7 +94,7 @@ async function onSend(e) {
   sendBalance(address, amount);
 }
 
-async function subscribeToAccountBalance(accountAddress) {
+async function subscribeToAccountBalanceChanges(accountAddress) {
   const loadBalance = async () => {
     const balanceInfo = await client.getBalanceInfo(accountAddress);
     const balance = !balanceInfo.balance.balanceInfoMap
