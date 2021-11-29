@@ -126,7 +126,7 @@ function Confirm() {
             <Button
               variant="outlined"
               size="small"
-              type="submit"
+              type="button"
               onClick={onCancel}
               disabled={state.working}
             >
