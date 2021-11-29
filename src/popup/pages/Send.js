@@ -4,12 +4,12 @@ import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
-import { ethers } from 'ethers';
 import { useHistory } from 'react-router-dom';
 
 import { useVite } from '../contexts/Vite';
-import { send, shortedAddress } from '../utils';
+import { send, shortedAddress, fmtBig } from '../utils';
 import Heading from '../components/shared/Heading';
+import BigNumber from 'bignumber.js';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -73,7 +73,7 @@ function Send({
   async function onSetMaxAmount() {
     const { balances } = await send('getBalances');
     const balance = balances[token];
-    update({ amount: ethers.utils.formatEther(balance) });
+    update({ amount: new BigNumber(balance).div(1e18).toString() });
   }
 
   function onGoBack() {
