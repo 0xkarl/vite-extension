@@ -189,12 +189,10 @@ export default async ({ name, payload }) => {
     }
 
     case 'getBalances': {
-      const { totalUSDBalance, balances, usdBalances, tokens } = store;
+      const { totalUSDBalance, balances } = store;
       return {
         totalUSDBalance,
         balances,
-        usdBalances,
-        tokens,
       };
     }
 
@@ -290,32 +288,15 @@ export default async ({ name, payload }) => {
         wallet: { address, privateKey },
         client,
       } = store;
-      const { token, recipient, amount, data = null } = payload;
-      let block;
-      if (token === 'VITE') {
-        block = accountBlock.createAccountBlock('send', {
-          address,
-          toAddress: recipient,
-          // tokenId: 'Vite_TokenId',
-          amount: toBig(amount).times(1e18).toString(),
-          // data,
-        });
-      } else {
-        // const { decimals } = store.tokens.find(
-        //   ({ symbol }) => symbol === token
-        // );
-        // const contract = store.contracts[token].connect(signer);
-        // tx = await contract.transfer(
-        //   to,
-        //   ethers.utils.parseUnits(value, decimals),
-        //   {
-        //     nonce,
-        //     gasLimit,
-        //     gasPrice,
-        //     data,
-        //   }
-        // );
-      }
+      const { tokenId, recipient, amount, decimals, data = null } = payload;
+      const block = accountBlock.createAccountBlock('send', {
+        address,
+        toAddress: recipient,
+        tokenId,
+        // tokenId: 'Vite_TokenId',
+        amount: toBig(amount).times(Math.pow(10, decimals)).toString(),
+        // data,
+      });
 
       block.setProvider(client).setPrivateKey(privateKey);
       await block.autoSetPreviousAccountBlock();
@@ -387,7 +368,7 @@ export default async ({ name, payload }) => {
     case 'exportPrivateKey': {
       const { pass, address } = payload;
       if (pass !== store.password) {
-        throw new Error('Pass doesn\'t match');
+        throw new Error("Pass doesn't match");
       }
       const { mnemonic } = store;
       const addresses = cache('addresses');

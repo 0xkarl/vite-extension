@@ -51,10 +51,14 @@ function Send({
     update({ working: true });
 
     try {
+      const { balances } = await send('getBalances');
+      const { decimals, tokenId } = balances[token];
       const { txBlockExplorerUrl, hash } = await send('sendToken', {
         token,
         amount,
         recipient,
+        decimals,
+        tokenId,
       });
       update({ txBlockExplorerUrl, recipient });
       await send('waitForTx', { hash });
@@ -72,8 +76,10 @@ function Send({
 
   async function onSetMaxAmount() {
     const { balances } = await send('getBalances');
-    const balance = balances[token];
-    update({ amount: new BigNumber(balance).div(1e18).toString() });
+    const { balance, decimals } = balances[token];
+    update({
+      amount: new BigNumber(balance).div(Math.pow(10, decimals)).toString(),
+    });
   }
 
   function onGoBack() {

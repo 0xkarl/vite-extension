@@ -1,31 +1,12 @@
-import * as ethers from 'ethers';
 import moment from 'moment';
 import { HTTP_RPC } from '@vite/vitejs-http';
 import { ViteAPI } from '@vite/vitejs';
 
-import { request } from './request';
+import * as request from './request';
 import { store } from './store';
 import { toBig } from './bn';
 import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
-import ERC20_CONTRACT_ABI from './erc20-abi';
-
-const SYMBOLS = ['VITE'];
-
-const COINGECKO_SYMBOLS = {
-  VITE: 'vite',
-};
-
-const TOKEN_IMAGES = {
-  VITE:
-    'https://assets.coingecko.com/coins/images/4513/small/Vite.png?1558014583',
-};
-
-const TOKEN_CONTRACT_ADDRESSES = {
-  local: {},
-  mainnet: {},
-  testnet: {}
-};
 
 const LOCAL_CLIENT = new ViteAPI(new HTTP_RPC('http://127.0.0.1:23456'));
 const MAINNET_CLIENT = new ViteAPI(new HTTP_RPC('https://node.vite.net/gvite'));
@@ -41,12 +22,6 @@ export const CLIENTS = {
 
 let BALANCE_UNSUBS = [];
 
-store.tokens = SYMBOLS.map((symbol) => ({
-  symbol,
-  decimals: 18,
-  image: TOKEN_IMAGES[symbol],
-}));
-
 switchNetwork(cache('network') || 'mainnet');
 
 export function switchNetwork(network) {
@@ -60,119 +35,65 @@ export function setupBalances() {
   subscribeToBalanceChanges();
 }
 
-function loadBalances() {
+async function loadBalances() {
   unsubscribePort();
 
   if (!store.wallet) {
     return;
   }
 
-  // const i = setInterval(() => console.log('gg'), 1000);
-  // BALANCE_UNSUBS.push(() => clearInterval(i));
-
   store.totalUSDBalance = toBig(0);
+  store.balances = [];
 
-  store.balances = SYMBOLS.reduce((ret, symbol) => {
-    ret[symbol] = toBig(0);
-    return ret;
-  }, {});
-
-  store.usdBalances = SYMBOLS.reduce((ret, symbol) => {
-    ret[symbol] = toBig(0);
-    return ret;
-  }, {});
-
-  store.contracts = SYMBOLS.reduce((ret, symbol) => {
-    const tokenContractAddress =
-      TOKEN_CONTRACT_ADDRESSES[store.network][symbol];
-    if (tokenContractAddress) {
-      ret[symbol] = new ethers.Contract(
-        tokenContractAddress,
-        ERC20_CONTRACT_ABI,
-        store.provider
-      );
-    }
-    return ret;
-  }, {});
-
-  SYMBOLS.forEach(loadBalance);
-}
-
-async function loadBalance(symbol) {
-  const { address } = store.wallet;
-  let balance;
-  if (symbol === 'VITE') {
-    const balanceInfo = await store.client.getBalanceInfo(address);
-    balance = !balanceInfo?.balance?.balanceInfoMap
-      ? toBig(0)
-      : Object.values(balanceInfo.balance.balanceInfoMap).reduce(
-          (balance, entry) => balance.plus(toBig(entry.balance)),
-          toBig(0)
-        );
-  } else {
-    // const contract = store.contracts[symbol];
-    // balance = await contract.balanceOf(address);
-  }
-  const balances = {};
-  balances[symbol] = toBig(balance.toString());
-  updateBalances(balances);
+  updateBalances();
 }
 
 async function subscribeToBalanceChanges() {
-  const {
-    client,
-    // contracts,
-    wallet: { address },
-  } = store;
-  SYMBOLS.forEach(async (symbol) => {
-    if (symbol === 'VITE') {
-      const newBlockEvent = 'newAccountBlocks';
-      const onBalanceChange = async () => {
-        const balanceInfo = await client.getBalanceInfo(address);
-        const balance = !balanceInfo.balance.balanceInfoMap
-          ? toBig(0)
-          : Object.values(balanceInfo.balance.balanceInfoMap).reduce(
-              (balance, entry) => balance.plus(toBig(entry.balance)),
-              toBig(0)
-            );
-        updateBalances({ [symbol]: toBig(balance.toString()) });
-      };
+  const { client } = store;
 
-      const eventName = 'newAccountBlocks';
-      const event = await client.subscribe(eventName);
-      event.on(onBalanceChange);
-      BALANCE_UNSUBS.push(() => event.off(newBlockEvent, onBalanceChange));
-    } else {
-      // const contract = contracts[symbol];
-      // const onBalanceChange = async (from, to) => {
-      //   if (from === address || to === address) {
-      //     const balance = await contract.balanceOf(address);
-      //     updateBalances({ [symbol]: toBig(balance.toString()) });
-      //   }
-      // };
-      // const transferEvent = contract.filters.Transfer();
-      // contract.on(transferEvent, onBalanceChange);
-      // BALANCE_UNSUBS.push(() => contract.off(transferEvent, onBalanceChange));
-    }
-  });
+  const newBlockEvent = 'newAccountBlocks';
+  const onBalanceChange = async () => {
+    updateBalances();
+  };
+
+  const eventName = 'newAccountBlocks';
+  const event = await client.subscribe(eventName);
+  event.on(onBalanceChange);
+  BALANCE_UNSUBS.push(() => event.off(newBlockEvent, onBalanceChange));
 }
 
-async function updateBalances(b) {
-  const prices = await getPrices();
-  store.balances = { ...store.balances, ...b };
-  store.usdBalances = Array.from(Object.entries(store.balances)).reduce(
-    (ret, [symbol, balance]) => {
-      const coingeckoSymbol = COINGECKO_SYMBOLS[symbol];
-      const price = toBig(prices[coingeckoSymbol].usd);
-      ret[symbol] = balance.dividedBy(1e18).multipliedBy(price);
-      return ret;
-    },
-    {}
+async function updateBalances() {
+  const { address } = store.wallet;
+
+  const balanceInfo = await store.client.getBalanceInfo(address);
+  const balanceInfoMap = balanceInfo?.balance?.balanceInfoMap ?? {};
+  const balances = Object.values(balanceInfoMap).reduce((ret, entry) => {
+    ret[entry.tokenInfo.tokenSymbol] = {
+      balance: toBig(entry.balance),
+      decimals: entry.tokenInfo.decimals,
+      name: entry.tokenInfo.tokenName,
+      symbol: entry.tokenInfo.tokenSymbol,
+      tokenId: entry.tokenInfo.tokenId,
+    };
+    return ret;
+  }, {});
+
+  const infos = await getTokenInfo(
+    Object.values(balances).map((entry) => entry.tokenId)
   );
-  store.totalUSDBalance = Array.from(Object.values(store.usdBalances)).reduce(
-    (ret, balance) => ret.plus(balance),
+  store.balances = { ...store.balances, ...balances };
+  Object.values(store.balances).forEach((balance) => {
+    const { icon, price } = infos[balance.symbol];
+    balance.usd = balance.balance
+      .dividedBy(Math.pow(10, balance.decimals))
+      .multipliedBy(price ?? toBig(0));
+    balance.icon = icon;
+  });
+  store.totalUSDBalance = Object.values(store.balances).reduce(
+    (ret, balance) => ret.plus(balance.usd),
     toBig(0)
   );
+
   broadcastBalancesUpdate();
 }
 
@@ -181,28 +102,32 @@ export function unsubscribePort() {
   BALANCE_UNSUBS = [];
 }
 
-const debounceMemo = (fn) => {
-  const C = {};
-  const T = {};
-  return async () => {
-    const key = store.wallet.address;
-    let c = C[key];
-    const t = T[key];
-    const now = Date.now();
-    if (!(c && t) || now > t) {
-      c = C[key] = await fn();
-      T[key] = now + 2 * 60 * 1000;
-    }
-    return c;
-  };
-};
+export const getTokenInfo = async function (tokenAddresses) {
+  const tickers24h = await request.get(
+    'https://vitex.vite.net/api/v2/ticker/24hr?quoteTokenCategory=USDT'
+  );
 
-export const getPrices = debounceMemo(function () {
-  return request('https://api.coingecko.com/api/v3/simple/price', {
-    ids: SYMBOLS.map((symbol) => COINGECKO_SYMBOLS[symbol]).join(','),
-    vs_currencies: 'usd',
-  });
-});
+  const prices = Object.values(tickers24h.data).reduce((ret, entry) => {
+    ret[entry.tradeToken] = toBig(entry.closePrice);
+    return ret;
+  }, {});
+
+  const { data } = await request.post(
+    'https://vitex.vite.net/api/v1/cryptocurrency/info/platform/query',
+    {
+      platformSymbol: 'VITE',
+      tokenAddresses,
+    }
+  );
+
+  return Object.values(data).reduce((ret, entry) => {
+    ret[entry.symbol] = {
+      price: entry.symbol === 'USDT' ? toBig(1) : prices[entry.tokenAddress],
+      icon: entry.icon,
+    };
+    return ret;
+  }, {});
+};
 
 export const getTransactions = async function () {
   const {
