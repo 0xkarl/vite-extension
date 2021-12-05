@@ -207,8 +207,18 @@ export function cacheCompletedTxn(hash) {
 
 export function getTxBlockExplorerUrl(hash, network) {
   network = network || store.network;
-  // const subdomain = network === 'mainnet' ? '' : `${network}.`;
-  return `https://explorer.vite.net/transaction/${hash}`;
+  switch (network) {
+    case 'mainnet': {
+      return `https://viteview.xyz/#/snapshot/${hash}`;
+    }
+
+    case 'testnet': {
+      return `https://buidl.viteview.xyz/#/snapshot/${hash}`;
+    }
+
+    default:
+      return `http://localhost:9999/#/snapshot/${hash}`;
+  }
 }
 
 export function getCurrentNetwork() {
