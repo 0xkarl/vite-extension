@@ -54,10 +54,11 @@ export async function broadcastAccountChange() {
 }
 
 export async function broadcastBalancesUpdate() {
-  const { totalUSDBalance, balances } = store;
+  const { totalUSDBalance, balances, unreceived } = store;
   broadcastToPopup('balances', {
     totalUSDBalance,
     balances,
+    unreceived,
   });
 }
 

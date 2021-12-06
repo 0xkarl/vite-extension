@@ -57,7 +57,8 @@ https://youtu.be/JmufcGt_pic
 ## Production builds
 
 To install a production ready build:
-- Download the latest release from the [releases](https://github.com/0xkarl/vite-extension/releases) section. 
+
+- Download the latest release from the [releases](https://github.com/0xkarl/vite-extension/releases) section.
 - Unzip the download.
 - Head over to the Chrome extension section (`chrome://extensions/`) and enable `Developer mode`.
 - Click `Load unpacked`.
@@ -69,8 +70,9 @@ To install a production ready build:
 
 - https://vite-extension.surge.sh/example.html
 - contracts:
-    - mainnet: vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3
-    - testnet: vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8
+  - mainnet: vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3
+  - testnet: vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8
+
 ## Docs
 
 https://0xkarl.github.io/vite-extension/getting-started/introduction.html
@@ -79,3 +81,4 @@ https://0xkarl.github.io/vite-extension/getting-started/introduction.html
 
 - https://docs.vite.org/go-vite/tutorial/sppguide/introduction/installation.html
 - https://docs.vite.org/vite.js/accountBlock/createAccountBlock.html
+- https://github.com/vitelabs/vite.js/blob/fa6109936891697dd44926e52c69930a4e0040fe/docs/viteAPI/GViteRPC.md

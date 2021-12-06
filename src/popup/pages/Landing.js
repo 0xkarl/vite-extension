@@ -8,6 +8,7 @@ import _flatten from 'lodash/flatten';
 import _orderBy from 'lodash/orderBy';
 
 import { fmtBig, send, subscribe } from '../utils';
+import { useVite } from '../contexts/Vite';
 import Header from '../components/shared/Header';
 import Heading from '../components/shared/Heading';
 
@@ -33,9 +34,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Landing() {
-  const router = useHistory();
   const classes = useStyles();
-  const [{ isLoaded, totalUSDBalance, balances }, _update] = useState({});
+  const [
+    { isLoaded, totalUSDBalance, balances, unreceived },
+    _update,
+  ] = useState({});
   const update = (a) => _update((b) => ({ ...b, ...a }));
 
   useEffect(() => {
@@ -60,7 +63,44 @@ function Landing() {
     };
   }, []);
 
-  const balanceEls = !balances
+  return !isLoaded ? null : (
+    <Box className={clsx(classes.container, 'flex flex-col')}>
+      <Header />
+      <div>
+        {!totalUSDBalance ? null : (
+          <Heading>${fmtBig(totalUSDBalance, 1, 2)}</Heading>
+        )}
+      </div>
+      <Balances {...{ balances }} />
+      {!unreceived.length ? null : (
+        <>
+          <h4 className="mt-3">UNRECEIVED:</h4>
+          <Balances balances={unreceived} receive />
+        </>
+      )}
+    </Box>
+  );
+}
+
+function Balances({ balances, receive }) {
+  const router = useHistory();
+  const { setError } = useVite();
+
+  const doReceive = async (sendBlockHash) => {
+    try {
+      await send('receiveToken', {
+        sendBlockHash,
+      });
+      // await send('waitForTx', { hash });
+      // update({ sent: true });
+    } catch (e) {
+      setError(e);
+    } finally {
+      // update({ working: false });
+    }
+  };
+
+  const els = !balances
     ? []
     : _flatten(
         _orderBy(Object.values(balances), 'usd', 'desc').map((balance) => [
@@ -82,24 +122,19 @@ function Landing() {
             key={`${balance.symbol}-button`}
             variant="outlined"
             size="small"
-            onClick={() => router.push(`/send/${balance.symbol}`)}
+            onClick={() =>
+              receive
+                ? doReceive(balance.sendBlockHash)
+                : router.push(
+                    `/${receive ? 'receive' : 'send'}/${balance.symbol}`
+                  )
+            }
           >
-            send
+            {receive ? 'receive' : 'send'}
           </Button>,
         ])
       );
 
-  return !isLoaded ? null : (
-    <Box className={clsx(classes.container, 'flex flex-col')}>
-      <Header />
-      <div>
-        {!totalUSDBalance ? null : (
-          <Heading>${fmtBig(totalUSDBalance, 1, 2)}</Heading>
-        )}
-      </div>
-      <div className="grid items-center text-right mt-2">{balanceEls}</div>
-    </Box>
-  );
+  return <div className="grid items-center text-right mt-2">{els}</div>;
 }
-
 export default Landing;

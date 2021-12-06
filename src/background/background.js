@@ -21,7 +21,7 @@ async function onMessage(message, sender) {
     let { code } = error;
     const { message } = error;
     code = code || 400;
-    console.warn({ code, message });
+    console.warn(error);
     console.trace();
     return { error: { code, message } };
   }

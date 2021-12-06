@@ -14,6 +14,8 @@ const TESTNET_CLIENT = new ViteAPI(
   new HTTP_RPC('https://buidl.vite.net/gvite')
 );
 
+export const NULL_ADDRESS = '0'.repeat(64);
+
 export const CLIENTS = {
   local: LOCAL_CLIENT,
   mainnet: MAINNET_CLIENT,
@@ -44,6 +46,7 @@ async function loadBalances() {
 
   store.totalUSDBalance = toBig(0);
   store.balances = [];
+  store.unreceived = [];
 
   updateBalances();
 }
@@ -63,17 +66,34 @@ async function subscribeToBalanceChanges() {
 }
 
 async function updateBalances() {
-  const { address } = store.wallet;
+  const balanceInfo = await getBalanceInfo();
+  console.log(balanceInfo);
+  await Promise.all([
+    getBalance(
+      'balances',
+      Object.values(balanceInfo.balance?.balanceInfoMap ?? {})
+    ),
+    getBalance('unreceived', balanceInfo.unreceived),
+  ]);
 
-  const balanceInfo = await store.client.getBalanceInfo(address);
-  const balanceInfoMap = balanceInfo?.balance?.balanceInfoMap ?? {};
-  const balances = Object.values(balanceInfoMap).reduce((ret, entry) => {
+  store.totalUSDBalance = Object.values(store.balances).reduce(
+    (ret, balance) => ret.plus(balance.usd),
+    toBig(0)
+  );
+
+  broadcastBalancesUpdate();
+}
+
+export async function getBalance(k, balanceInfo) {
+  const balances = balanceInfo.reduce((ret, entry) => {
     ret[entry.tokenInfo.tokenSymbol] = {
-      balance: toBig(entry.balance),
+      balance: toBig(entry.balance ?? entry.amount),
+      fromAddress: entry.accountAddress,
       decimals: entry.tokenInfo.decimals,
       name: entry.tokenInfo.tokenName,
       symbol: entry.tokenInfo.tokenSymbol,
       tokenId: entry.tokenInfo.tokenId,
+      sendBlockHash: entry.hash,
     };
     return ret;
   }, {});
@@ -81,20 +101,48 @@ async function updateBalances() {
   const infos = await getTokenInfo(
     Object.values(balances).map((entry) => entry.tokenId)
   );
-  store.balances = { ...store.balances, ...balances };
-  Object.values(store.balances).forEach((balance) => {
+  store[k] = { ...store[k], ...balances };
+  Object.values(store[k]).forEach((balance) => {
     const { icon, price } = infos[balance.symbol];
     balance.usd = balance.balance
       .dividedBy(Math.pow(10, balance.decimals))
       .multipliedBy(price ?? toBig(0));
     balance.icon = icon;
   });
-  store.totalUSDBalance = Object.values(store.balances).reduce(
-    (ret, balance) => ret.plus(balance.usd),
-    toBig(0)
-  );
+}
 
-  broadcastBalancesUpdate();
+async function getBalanceInfo() {
+  const { address } = store.wallet;
+
+  const data = await store.client.batch([
+    {
+      methodName: 'ledger_getAccountInfoByAddress',
+      params: [address],
+    },
+    {
+      methodName: 'ledger_getUnreceivedBlocksByAddress',
+      params: [address, 0, 100],
+    },
+  ]);
+
+  if (!data || (data instanceof Array && data.length < 2)) {
+    return {
+      balance: null,
+      unreceived: null,
+    };
+  }
+
+  if (data[0].error) {
+    throw data[0].error;
+  }
+  if (data[1].error) {
+    throw data[1].error;
+  }
+
+  return {
+    balance: data[0].result,
+    unreceived: data[1].result,
+  };
 }
 
 export function unsubscribePort() {
@@ -209,15 +257,15 @@ export function getTxBlockExplorerUrl(hash, network) {
   network = network || store.network;
   switch (network) {
     case 'mainnet': {
-      return `https://viteview.xyz/#/snapshot/${hash}`;
+      return `https://viteview.xyz/#/tx/${hash}`;
     }
 
     case 'testnet': {
-      return `https://buidl.viteview.xyz/#/snapshot/${hash}`;
+      return `https://buidl.viteview.xyz/#/tx/${hash}`;
     }
 
     default:
-      return `http://localhost:9999/#/snapshot/${hash}`;
+      return `http://localhost:9999/#/tx/${hash}`;
   }
 }
 

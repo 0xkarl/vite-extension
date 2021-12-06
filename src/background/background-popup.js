@@ -189,10 +189,11 @@ export default async ({ name, payload }) => {
     }
 
     case 'getBalances': {
-      const { totalUSDBalance, balances } = store;
+      const { totalUSDBalance, balances, unreceived } = store;
       return {
         totalUSDBalance,
         balances,
+        unreceived,
       };
     }
 
@@ -320,6 +321,7 @@ export default async ({ name, payload }) => {
       //   token,
       //   hash,
       // });
+
       const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
     }
@@ -379,6 +381,48 @@ export default async ({ name, payload }) => {
       });
       return { exportedPrivateKey: privateKey };
     }
+
+    case 'receiveToken': {
+      const {
+        wallet: { address, privateKey },
+        client,
+      } = store;
+      const { sendBlockHash } = payload;
+
+      const block = accountBlock.createAccountBlock('receive', {
+        address,
+        sendBlockHash,
+      });
+
+      block.setProvider(client).setPrivateKey(privateKey);
+      await block.autoSetPreviousAccountBlock();
+      const result = await block.sign().send();
+
+      const hash = result.hash;
+
+      // tx.wait().then(() => {
+      //   cacheCompletedTxn(hash);
+      // });
+
+      // cachePendingTxn(store.wallet.address, nonce, {
+      //   description: `Send ${token}`,
+      //   value,
+      //   token,
+      //   hash,
+      // });
+      // cachePendingTxn(to, nonce, {
+      //   description: `Receive ${token}`,
+      //   value,
+      //   token,
+      //   hash,
+      // });
+
+      const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
+      return { txBlockExplorerUrl, hash };
+    }
+
+    default:
+      throw new Error(`unhandled action: ${name}`);
   }
 };
 
