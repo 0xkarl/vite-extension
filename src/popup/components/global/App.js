@@ -15,6 +15,7 @@ import Account from '../../pages/Account';
 import Landing from '../../pages/Landing';
 import Import from '../../pages/Import';
 import Register from '../../pages/Register';
+import AddNetwork from '../../pages/AddNetwork';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -50,6 +51,7 @@ function App() {
           <Route exact path="/confirm" component={Confirm} />
           <Route exact path="/account/:address" component={Account} />
           <Route exact path="/landing" component={Landing} />
+          <Route exact path="/add-network" component={AddNetwork} />
           <Redirect to="/landing" />
         </Switch>
       )}

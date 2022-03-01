@@ -103,6 +103,11 @@ function Header() {
     });
   }
 
+  function startAddNetwork() {
+    hideMenu();
+    router.push('/add-network');
+  }
+
   return (
     <Box className={classes.container}>
       <div className="menu flex flex-col flex-grow mb-2">
@@ -163,27 +168,30 @@ function Header() {
               {searchedAddresses.length ? null : (
                 <div>No matching accounts found.</div>
               )}
+              <div className="cursor-pointer" onClick={createAccount}>
+                Add account
+              </div>
             </Box>
 
             <div className={classes.sep}></div>
 
-            {networks.map((net) => (
-              <div
-                key={net}
-                className={clsx('cursor-pointer', {
-                  [classes.active]: net === network,
-                })}
-                onClick={() => switchNetwork(net)}
-              >
-                {net}
-              </div>
-            ))}
+            <Box>
+              {networks.map((net) => (
+                <div
+                  key={net}
+                  className={clsx('cursor-pointer', {
+                    [classes.active]: net === network,
+                  })}
+                  onClick={() => switchNetwork(net)}
+                >
+                  {net}
+                </div>
+              ))}
+              <div onClick={startAddNetwork}>Add Network</div>
+            </Box>
 
             <div className={classes.sep}></div>
 
-            <div className="cursor-pointer" onClick={createAccount}>
-              Add account
-            </div>
             <div className="cursor-pointer" onClick={goToSettings}>
               Settings
             </div>
