@@ -1,6 +1,6 @@
 // import log from 'loglevel';
 import LocalMessageDuplexStream from 'post-message-stream';
-import { initializeProvider } from '@metamask/inpage-provider';
+import { initializeProvider } from './inpage-provider/dist';
 
 // log.setDefaultLevel(process.env.METAMASK_DEBUG ? 'debug' : 'warn');
 
@@ -21,8 +21,3 @@ initializeProvider({
   // logger: log,
   shouldShimWeb3: true,
 });
-
-window.vite = window.ethereum;
-
-// todo: clone @metamask/inpage-provider
-delete window.ethereum;

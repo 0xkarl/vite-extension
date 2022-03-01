@@ -1,0 +1,88 @@
+{
+  "_from": "@metamask/inpage-provider@^8.0.4",
+  "_id": "@metamask/inpage-provider@8.0.4",
+  "_inBundle": false,
+  "_integrity": "sha512-jdI0gVWW/0wQvKZe6shXl70cU+vIb8GpAimKFU4udc/HKtgp8tLd21ezq74RaMP/lHR+qq0coOQ2KnOnl8iNNg==",
+  "_location": "/@metamask/inpage-provider",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@metamask/inpage-provider@^8.0.4",
+    "name": "@metamask/inpage-provider",
+    "escapedName": "@metamask%2finpage-provider",
+    "scope": "@metamask",
+    "rawSpec": "^8.0.4",
+    "saveSpec": null,
+    "fetchSpec": "^8.0.4"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@metamask/inpage-provider/-/inpage-provider-8.0.4.tgz",
+  "_shasum": "6534fbdba4445a3aff639e32db66bb0ab5f0cd79",
+  "_spec": "@metamask/inpage-provider@^8.0.4",
+  "_where": "/Users/unstylo/Documents/src/github.com/unstylo/talegift",
+  "author": {
+    "name": "MetaMask"
+  },
+  "bugs": {
+    "url": "https://github.com/MetaMask/inpage-provider/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@metamask/object-multiplex": "^1.1.0",
+    "@metamask/safe-event-emitter": "^2.0.0",
+    "eth-rpc-errors": "^4.0.2",
+    "fast-deep-equal": "^2.0.1",
+    "is-stream": "^2.0.0",
+    "json-rpc-engine": "^6.1.0",
+    "json-rpc-middleware-stream": "^3.0.0",
+    "pump": "^3.0.0"
+  },
+  "deprecated": false,
+  "description": "A JavaScript Ethereum provider that connects to the wallet over a stream.",
+  "devDependencies": {
+    "@metamask/eslint-config": "^4.1.0",
+    "@types/jest": "^26.0.5",
+    "@types/node": "^14.14.14",
+    "@types/pump": "^1.1.0",
+    "@types/readable-stream": "^2.3.9",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "eslint": "^7.15.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.18.0",
+    "eslint-plugin-json": "^2.0.1",
+    "eslint-plugin-node": "^11.1.0",
+    "jest": "^26.6.3",
+    "typescript": "^4.1.3"
+  },
+  "files": [
+    "dist/"
+  ],
+  "homepage": "https://github.com/MetaMask/inpage-provider#readme",
+  "keywords": [
+    "MetaMask",
+    "Ethereum",
+    "Provider"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "@metamask/inpage-provider",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/MetaMask/inpage-provider.git"
+  },
+  "scripts": {
+    "build": "tsc --project .",
+    "coverage": "jest --coverage",
+    "lint": "eslint . --ext ts,js,json",
+    "lint:fix": "yarn lint --fix",
+    "prepublishOnly": "yarn require-clean-git && yarn lint && yarn test",
+    "require-clean-git": "git diff --quiet || (echo 'Please clean the working directory.' && exit 1)",
+    "test": "yarn build && jest"
+  },
+  "types": "dist/index.d.ts",
+  "version": "8.0.4"
+}

@@ -124,7 +124,7 @@ async function sendBalance(toAddress, amount) {
       ? 'vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3'
       : chainId === 2
       ? 'vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8'
-      : 'vite_0e56e42f1fa342647b877d37cd02f64b388b1b307820f26098';
+      : 'vite_39adf1cfd298a7b73ec44d154d85c8ffd442c597945bac089e';
 
   const result = await window.vite.request({
     method: 'eth_createAccountBlock',
