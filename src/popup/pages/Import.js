@@ -25,7 +25,7 @@ function Import() {
 
     setError(null);
     if (password !== confirmPassword) {
-      return setError('Passwords do not match.');
+      return setError(new Error('Passwords do not match.'));
     }
     importAccount(mnemonic, password);
   };

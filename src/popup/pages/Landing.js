@@ -35,6 +35,7 @@ const useStyles = makeStyles(() => ({
 
 function Landing() {
   const classes = useStyles();
+  const { setError } = useVite();
   const [
     { isLoaded, totalUSDBalance, balances, unreceived },
     _update,
@@ -43,6 +44,8 @@ function Landing() {
 
   useEffect(() => {
     const unsubs = [];
+
+    setError(null);
 
     loadBalances();
     subscribeToBalanceChanges();

@@ -45,20 +45,28 @@ export default async ({ name, payload }) => {
     }
 
     case 'register': {
-      store.password = payload.password;
-      const mnemonic = wallet.createMnemonics();
-      const encryptedMnemonic = window.CryptoJS.AES.encrypt(
-        mnemonic,
-        store.password
-      ).toString();
-      const currentAccountIndex = 0;
+      const { password } = payload;
+      let mnemonic, encryptedMnemonic, w;
+      try {
+        mnemonic = wallet.createMnemonics();
+        encryptedMnemonic = window.CryptoJS.AES.encrypt(
+          mnemonic,
+          password
+        ).toString();
+        w = wallet.deriveAddress({
+          mnemonics: mnemonic,
+          index: currentAccountIndex,
+        });
+      } catch (e) {
+        throw new Error('Invalid password');
+      }
+
+      store.password = password;
       store.mnemonic = mnemonic;
       store.locked = false;
-      store.wallet = wallet.deriveAddress({
-        mnemonics: mnemonic,
-        index: currentAccountIndex,
-      });
+      store.wallet = w;
 
+      const currentAccountIndex = 0;
       const addresses = [store.wallet.address];
       const addressesInfo = {
         [store.wallet.address]: { name: `Account ${currentAccountIndex + 1}` },
@@ -80,25 +88,33 @@ export default async ({ name, payload }) => {
     }
 
     case 'importAccount': {
-      store.password = payload.password;
-      store.mnemonic = payload.mnemonic;
+      const { mnemonic, password } = payload;
+      let encryptedMnemonic, w;
+
+      try {
+        encryptedMnemonic = window.CryptoJS.AES.encrypt(
+          mnemonic,
+          password
+        ).toString();
+
+        w = wallet.deriveAddress({
+          mnemonics: mnemonic,
+          index: currentAccountIndex,
+        });
+      } catch (e) {
+        throw new Error('Invalid password');
+      }
+
+      store.password = password;
+      store.mnemonic = mnemonic;
       store.locked = false;
+      store.wallet = w;
 
       const currentAccountIndex = 0;
-      store.wallet = wallet.deriveAddress({
-        mnemonics: store.mnemonic,
-        index: currentAccountIndex,
-      });
-
       const addresses = [store.wallet.address];
       const addressesInfo = {
         [store.wallet.address]: { name: `Account ${currentAccountIndex + 1}` },
       };
-
-      const encryptedMnemonic = window.CryptoJS.AES.encrypt(
-        store.mnemonic,
-        store.password
-      ).toString();
 
       cache('encryptedMnemonic', encryptedMnemonic);
       cache('currentAccountIndex', currentAccountIndex);
@@ -371,7 +387,7 @@ export default async ({ name, payload }) => {
     case 'exportPrivateKey': {
       const { pass, address } = payload;
       if (pass !== store.password) {
-        throw new Error("Pass doesn't match");
+        throw new Error('Pass do not match');
       }
       const { mnemonic } = store;
       const addresses = cache('addresses');
@@ -447,21 +463,22 @@ function unlock() {
   const addresses = cache('addresses') || [];
   const currentAccountIndex = cache('currentAccountIndex');
   const addressesInfo = cache('addressesInfo') || {};
-  let mnemonic;
+  let mnemonic, w;
   try {
     mnemonic = window.CryptoJS.AES.decrypt(
       encryptedMnemonic,
       store.password
     ).toString(window.CryptoJS.enc.Utf8);
+    w = wallet.deriveAddress({
+      mnemonics: mnemonic,
+      index: currentAccountIndex,
+    });
   } catch (e) {
     store.password = null;
-    throw new Error('Wrong pass');
+    throw new Error('Wrong password.');
   }
   store.mnemonic = mnemonic;
-  store.wallet = wallet.deriveAddress({
-    mnemonics: mnemonic,
-    index: currentAccountIndex,
-  });
+  store.wallet = w;
   store.locked = false;
 
   setupBalances();
