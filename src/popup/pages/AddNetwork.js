@@ -3,6 +3,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { useHistory } from 'react-router-dom';
 
 import { useVite } from '../contexts/Vite';
 import { send, getQueryParams, sleep } from '../utils';
@@ -18,21 +19,27 @@ const useStyles = makeStyles(() => ({
 
 function AddNetwork() {
   const classes = useStyles();
-  const { setError } = useVite();
+  const { setError, addNetwork } = useVite();
+  const router = useHistory();
   const [saved, setSaved] = useState(false);
 
   async function onAddNetwork(e) {
     e.preventDefault();
 
     const name = (e.target.name.value || '').trim();
-    const url = (e.target.url.value || '').trim();
-    const txBlockExplorerUrl = (e.target.txBlockExplorerUrl.value || '').trim();
+    const rpcUrl = (e.target.rpcUrl.value || '').trim();
+    const blockExplorerUrl = (e.target.blockExplorerUrl.value || '').trim();
 
     setError(null);
-    // await addNetwork(name, url);
-    setSaved(true);
-    await sleep(1000);
-    setSaved(false);
+    try {
+      await addNetwork(name, rpcUrl, blockExplorerUrl);
+      setSaved(true);
+      router.push('/');
+      await sleep(1000);
+      setSaved(false);
+    } catch (e) {
+      setError(e);
+    }
   }
 
   return (
@@ -56,8 +63,8 @@ function AddNetwork() {
 
         <Box mt={1}>
           <TextField
-            id="url"
-            label="Url"
+            id="rpcUrl"
+            label="RPC Url"
             type="url"
             InputLabelProps={{
               shrink: true,
@@ -70,7 +77,7 @@ function AddNetwork() {
 
         <Box mt={1}>
           <TextField
-            id="txBlockExplorerUrl"
+            id="blockExplorerUrl"
             label="Block Explorer Url"
             type="url"
             InputLabelProps={{

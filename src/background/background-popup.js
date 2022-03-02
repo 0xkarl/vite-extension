@@ -11,7 +11,8 @@ import {
   cachePendingTxn,
   cacheCompletedTxn,
   getTxBlockExplorerUrl,
-  CLIENTS,
+  getNetworks,
+  uuid,
 } from './utils';
 import { toBig } from '../popup/utils';
 
@@ -201,7 +202,7 @@ export default async ({ name, payload }) => {
       const { network } = store;
       return {
         network,
-        networks: Object.keys(CLIENTS),
+        networks: getNetworks(),
       };
     }
 
@@ -419,6 +420,21 @@ export default async ({ name, payload }) => {
 
       const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
+    }
+
+    case 'addNetwork': {
+      const networks = cache('networks') || [];
+      for (let i = 0; i < networks.length; i++) {
+        const n = networks[i];
+        if (n.name === payload.name) {
+          throw new Error('A network exists with that name...');
+        }
+      }
+      const id = uuid();
+      const network = { id, ...payload };
+      cache('networks', [...networks, network]);
+      switchNetwork(id);
+      return {};
     }
 
     default:

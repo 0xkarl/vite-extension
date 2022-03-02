@@ -94,6 +94,14 @@ export const ViteProvider = ({ children }) => {
     }
   }
 
+  async function addNetwork(name, rpcUrl, blockExplorerUrl) {
+    try {
+      update(await send('addNetwork', { name, rpcUrl, blockExplorerUrl }));
+    } catch (e) {
+      setError(e);
+    }
+  }
+
   return (
     <ViteContext.Provider
       value={{
@@ -108,6 +116,7 @@ export const ViteProvider = ({ children }) => {
         createAccount,
         switchAccount,
         saveAccountName,
+        addNetwork,
       }}
     >
       {children}

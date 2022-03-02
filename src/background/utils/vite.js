@@ -8,28 +8,52 @@ import { toBig } from './bn';
 import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
 
-const LOCAL_CLIENT = new ViteAPI(new HTTP_RPC('http://127.0.0.1:23456'));
-const MAINNET_CLIENT = new ViteAPI(new HTTP_RPC('https://node.vite.net/gvite'));
-const TESTNET_CLIENT = new ViteAPI(
-  new HTTP_RPC('https://buidl.vite.net/gvite')
-);
+const NETWORKS = [
+  {
+    id: 'mainnet',
+    name: 'Mainnet',
+    rpcUrl: 'https://node.vite.net/gvite',
+    blockExplorerUrl: 'https://viteview.xyz/#/tx/',
+  },
+  {
+    id: 'testnet',
+    name: 'Testnet',
+    rpcUrl: 'https://buidl.vite.net/gvite',
+    blockExplorerUrl: 'https://buidl.viteview.xyz/#/tx/',
+  },
+  {
+    id: 'local',
+    name: 'Local',
+    rpcUrl: 'http://127.0.0.1:23456',
+    blockExplorerUrl: 'http://localhost:9999/#/tx/',
+  },
+];
 
 export const NULL_ADDRESS = '0'.repeat(64);
-
-export const CLIENTS = {
-  local: LOCAL_CLIENT,
-  mainnet: MAINNET_CLIENT,
-  testnet: TESTNET_CLIENT,
-};
 
 let BALANCE_UNSUBS = [];
 
 switchNetwork(cache('network') || 'mainnet');
 
-export function switchNetwork(network) {
-  store.network = network;
-  store.client = CLIENTS[network];
-  cache('network', network);
+export function switchNetwork(networkId) {
+  const { rpcUrl } = getNetwork(networkId);
+  store.network = networkId;
+  store.client = new ViteAPI(new HTTP_RPC(rpcUrl));
+  cache('network', networkId);
+}
+
+export function getNetworks() {
+  return NETWORKS.concat(cache('networks') || []);
+}
+
+export function getNetwork(networkId) {
+  const networks = getNetworks();
+  for (let i = 0; i < networks.length; i++) {
+    const n = networks[i];
+    if (n.id === networkId) {
+      return n;
+    }
+  }
 }
 
 export function setupBalances() {
@@ -253,20 +277,10 @@ export function cacheCompletedTxn(hash) {
   }
 }
 
-export function getTxBlockExplorerUrl(hash, network) {
-  network = network || store.network;
-  switch (network) {
-    case 'mainnet': {
-      return `https://viteview.xyz/#/tx/${hash}`;
-    }
-
-    case 'testnet': {
-      return `https://buidl.viteview.xyz/#/tx/${hash}`;
-    }
-
-    default:
-      return `http://localhost:9999/#/tx/${hash}`;
-  }
+export function getTxBlockExplorerUrl(hash, networkId) {
+  networkId = networkId || store.network;
+  const { rpcUrl } = getNetwork(networkId);
+  return rpcUrl + hash;
 }
 
 export function getCurrentNetwork() {

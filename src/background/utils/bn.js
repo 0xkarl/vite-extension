@@ -14,3 +14,7 @@ export function fmtBig(a, b, precision = PRECISION) {
   }
   return a.div(b).toFormat(precision);
 }
+
+export function uuid() {
+  return Date.now().toString();
+}

@@ -178,16 +178,18 @@ function Header() {
             <Box>
               {networks.map((net) => (
                 <div
-                  key={net}
+                  key={net.id}
                   className={clsx('cursor-pointer', {
-                    [classes.active]: net === network,
+                    [classes.active]: net.id === network,
                   })}
-                  onClick={() => switchNetwork(net)}
+                  onClick={() => switchNetwork(net.id)}
                 >
-                  {net}
+                  {net.name}
                 </div>
               ))}
-              <div onClick={startAddNetwork}>Add Network</div>
+              <div onClick={startAddNetwork} className="cursor-pointer">
+                Add Network
+              </div>
             </Box>
 
             <div className={classes.sep}></div>
