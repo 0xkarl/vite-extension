@@ -47,9 +47,6 @@ function Confirm() {
         params: JSON.parse(params),
         type,
       });
-      console.log(result);
-      // update({ txBlockExplorerUrl: txBlockExplorerUrl(hash) });
-      // await send('waitForTx', { hash });
       send('result', {
         tabId,
         id,

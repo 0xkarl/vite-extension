@@ -53,7 +53,7 @@ function Send({
     try {
       const { balances } = await send('getBalances');
       const { decimals, tokenId } = balances[token];
-      const { txBlockExplorerUrl, hash } = await send('sendToken', {
+      const { txBlockExplorerUrl } = await send('sendToken', {
         token,
         amount,
         recipient,
@@ -61,7 +61,6 @@ function Send({
         tokenId,
       });
       update({ txBlockExplorerUrl, recipient });
-      await send('waitForTx', { hash });
       update({ sent: true });
     } catch (e) {
       setError(e);

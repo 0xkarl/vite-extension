@@ -94,12 +94,8 @@ function Balances({ balances, receive }) {
       await send('receiveToken', {
         sendBlockHash,
       });
-      // await send('waitForTx', { hash });
-      // update({ sent: true });
     } catch (e) {
       setError(e);
-    } finally {
-      // update({ working: false });
     }
   };
 

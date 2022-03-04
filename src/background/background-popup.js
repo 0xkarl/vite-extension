@@ -5,11 +5,8 @@ import {
   getDomainAccounts,
   switchNetwork,
   setupBalances,
-  fmtBig,
   getTransactions,
   broadcastAccountChange,
-  cachePendingTxn,
-  cacheCompletedTxn,
   getTxBlockExplorerUrl,
   getNetworks,
   uuid,
@@ -321,24 +318,6 @@ export default async ({ name, payload }) => {
       const result = await block.sign().send();
 
       const hash = result.hash;
-
-      // tx.wait().then(() => {
-      //   cacheCompletedTxn(hash);
-      // });
-
-      // cachePendingTxn(store.wallet.address, nonce, {
-      //   description: `Send ${token}`,
-      //   value,
-      //   token,
-      //   hash,
-      // });
-      // cachePendingTxn(to, nonce, {
-      //   description: `Receive ${token}`,
-      //   value,
-      //   token,
-      //   hash,
-      // });
-
       const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
     }
@@ -361,13 +340,6 @@ export default async ({ name, payload }) => {
       const result = await block.sign().send();
 
       return result;
-    }
-
-    case 'waitForTx': {
-      // const { hash } = payload;
-      // await store.provider.waitForTransaction(hash);
-      // cacheCompletedTxn(hash);
-      return {};
     }
 
     case 'getTransactions': {
@@ -416,24 +388,6 @@ export default async ({ name, payload }) => {
       const result = await block.sign().send();
 
       const hash = result.hash;
-
-      // tx.wait().then(() => {
-      //   cacheCompletedTxn(hash);
-      // });
-
-      // cachePendingTxn(store.wallet.address, nonce, {
-      //   description: `Send ${token}`,
-      //   value,
-      //   token,
-      //   hash,
-      // });
-      // cachePendingTxn(to, nonce, {
-      //   description: `Receive ${token}`,
-      //   value,
-      //   token,
-      //   hash,
-      // });
-
       const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
     }

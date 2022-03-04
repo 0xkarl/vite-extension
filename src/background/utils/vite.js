@@ -4,9 +4,10 @@ import { ViteAPI } from '@vite/vitejs';
 
 import * as request from './request';
 import { store } from './store';
-import { toBig } from './bn';
+import { toBig, fmtBig } from './bn';
 import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
+import { shortedAddress } from '../../popup/utils';
 
 const NETWORKS = [
   {
@@ -155,7 +156,6 @@ async function getBalanceInfo() {
       unreceived: null,
     };
   }
-
   if (data[0].error) {
     throw data[0].error;
   }
@@ -205,89 +205,66 @@ export const getTransactions = async function () {
   const {
     wallet: { address },
   } = store;
-  const allTxns = cache('transactions') || {};
-  let txns = [];
-  for (const nonce in allTxns[address]) {
-    txns.push({
-      nonce,
-      ...allTxns[address][nonce],
-    });
-  }
-  txns = await Promise.all(txns.map(checkIfTxnIsComplete));
-  txns.sort((a, b) => {
-    a = parseInt(a.nonce);
-    b = parseInt(b.nonce);
-    if (a < b) {
-      return -1;
-    }
-    if (b < a) {
-      return 1;
-    }
-    return 0;
-  });
-  return txns.map(({ hash, network, ...rest }) => ({
-    hash,
-    txBlockExplorerUrl: getTxBlockExplorerUrl(hash, network),
-    ...rest,
-  }));
+
+  const accountBlocks = await store.client.request(
+    'ledger_getAccountBlocksByAddress',
+    address,
+    0,
+    100
+  );
+
+  console.log({ accountBlocks });
+
+  return accountBlocks
+    .map(
+      (
+        {
+          blockType,
+          fromAddress,
+          toAddress,
+          amount,
+          hash,
+          tokenInfo,
+          timestamp,
+        },
+        i
+      ) => {
+        const txn = { hash };
+        txn.txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
+        txn.date = moment.unix(timestamp).local().format('MMM D, HH:mm');
+
+        switch (blockType) {
+          // 1->request(create contract).
+          // 2->request(transfer).
+          // 3->request(re-issue token).
+          // 4->response.
+          // 5->response(failed).
+          // 6->request(refund by contract).
+          // 7->response(genesis).
+
+          case 2: {
+            txn.description = `Sent to ${shortedAddress(toAddress)}`;
+            txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
+            txn.token = tokenInfo.tokenSymbol;
+            return txn;
+          }
+
+          case 4: {
+            txn.description = `Received from ${shortedAddress(fromAddress)}`;
+            txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
+            txn.token = tokenInfo.tokenSymbol;
+            return txn;
+          }
+
+          default:
+        }
+      }
+    )
+    .filter((txn) => !!txn);
 };
-
-async function checkIfTxnIsComplete(txn) {
-  if (!txn.timestamp) {
-    const receipt = await store.provider.getTransactionReceipt(txn.hash);
-    if (receipt) {
-      const block = await store.provider.getBlock(receipt.blockNumber);
-      txn.timestamp = block.timestamp;
-
-      const allTxns = cache('transactions');
-      allTxns[store.wallet.address][txn.nonce] = txn;
-      cache('transactions', allTxns);
-    }
-  }
-  txn.date = moment.unix(txn.timestamp).local().format('MMM D');
-  return txn;
-}
-
-export function cachePendingTxn(address, nonce, txn) {
-  const { network } = store;
-  const allTxns = cache('transactions') || {};
-  const txns = allTxns[address] || {};
-  txns[nonce] = {
-    ...txn,
-    network,
-  };
-  allTxns[address] = txns;
-  cache('transactions', allTxns);
-}
-
-export function cacheCompletedTxn(hash) {
-  const {
-    wallet: { address },
-  } = store;
-  const allTxns = cache('transactions') || {};
-  const txns = allTxns[address] || {};
-  for (const nonce in txns) {
-    const txn = txns[nonce];
-    if (txn.hash === hash) {
-      txn.timestamp = moment.utc().unix();
-      allTxns[address] = txns;
-      cache('transactions', allTxns);
-      break;
-    }
-  }
-}
 
 export function getTxBlockExplorerUrl(hash, networkId) {
   networkId = networkId || store.network;
   const { rpcUrl } = getNetwork(networkId);
   return rpcUrl + hash;
-}
-
-export function getCurrentNetwork() {
-  const network = store.network;
-  return {
-    chainId:
-      network === 'mainnet' ? '0x1' : network === 'testnet' ? '0x2' : '0x3',
-    networkVersion: network, // todo
-  };
 }

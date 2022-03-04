@@ -3,26 +3,21 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 
 import { useVite } from '../contexts/Vite';
+import { fmtBig, send, subscribe } from '../utils';
 import Heading from '../components/shared/Heading';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    '& .txn': {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      borderTop: '1px solid #eee',
-    },
+  container: {},
+  txn: {
+    fontSize: 13,
 
-    '& .txn:hover': {
+    '&:hover': {
       opacity: 0.8,
     },
 
-    '& .pending': {
-      color: ',orange',
-    },
-
-    '& .pending:after': {
-      content: 'Pending',
+    '& .date': {
+      fontSize: 10,
     },
   },
 }));
@@ -33,11 +28,23 @@ function Transactions() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    const load = async () => {
+    const unsubs = [];
+
+    loadTransactions();
+    subscribeToTransactionChanges();
+
+    async function loadTransactions() {
       const { transactions } = await send('getTransactions');
       setTransactions(transactions);
+    }
+
+    function subscribeToTransactionChanges() {
+      unsubs.push(subscribe('transactions', setTransactions));
+    }
+
+    return () => {
+      unsubs.forEach((unsub) => unsub());
     };
-    load();
   }, [address]);
 
   return (
@@ -49,18 +56,19 @@ function Transactions() {
       <div className="flex flex-col">
         {transactions.map((txn) => (
           <a
-            key={txn.txBlockExplorerUrl}
+            key={txn.hash}
             href={txn.txBlockExplorerUrl}
-            className="txn py-2"
+            className={clsx(classes.txn, 'flex flex-grow justify-space py-2')}
             target="_blank"
           >
-            <div className="text-lg">{txn.description}</div>
-            <div className="text-right text-base">
-              {txn.value}
-              {txn.token}
+            <div className="flex flex-col">
+              <div className="font-bold">{txn.description}</div>
+              <div className="date">
+                {txn.date ? <div>{txn.date}</div> : <div className="pending" />}
+              </div>
             </div>
-            <div>
-              {txn.date ? <div>{txn.date}</div> : <div className="pending" />}
+            <div className="text-right font-bold">
+              {txn.value} {txn.token}
             </div>
           </a>
         ))}
