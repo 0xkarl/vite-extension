@@ -75,7 +75,7 @@ function Landing() {
         )}
       </div>
       <Balances {...{ balances }} />
-      {!unreceived.length ? null : (
+      {!Object.keys(unreceived).length ? null : (
         <>
           <h4 className="mt-3">UNRECEIVED:</h4>
           <Balances balances={unreceived} receive />

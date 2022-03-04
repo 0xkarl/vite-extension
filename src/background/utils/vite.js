@@ -91,7 +91,7 @@ async function subscribeToBalanceChanges() {
 
 async function updateBalances() {
   const balanceInfo = await getBalanceInfo();
-  console.log(balanceInfo);
+  // console.log(balanceInfo);
   await Promise.all([
     getBalance(
       'balances',
@@ -125,7 +125,7 @@ export async function getBalance(k, balanceInfo) {
   const infos = await getTokenInfo(
     Object.values(balances).map((entry) => entry.tokenId)
   );
-  store[k] = { ...store[k], ...balances };
+  store[k] = balances;
   Object.values(store[k]).forEach((balance) => {
     const { icon, price } = infos[balance.symbol];
     balance.usd = balance.balance
