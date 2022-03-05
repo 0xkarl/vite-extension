@@ -217,18 +217,15 @@ export const getTransactions = async function () {
 
   return accountBlocks
     .map(
-      (
-        {
-          blockType,
-          fromAddress,
-          toAddress,
-          amount,
-          hash,
-          tokenInfo,
-          timestamp,
-        },
-        i
-      ) => {
+      ({
+        blockType,
+        fromAddress,
+        toAddress,
+        amount,
+        hash,
+        tokenInfo,
+        timestamp,
+      }) => {
         const txn = { hash };
         txn.txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
         txn.date = moment.unix(timestamp).local().format('MMM D, HH:mm');

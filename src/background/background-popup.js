@@ -1,4 +1,5 @@
 import { wallet, accountBlock } from '@vite/vitejs';
+import pwd from 'browser-passworder';
 import {
   store,
   cache,
@@ -18,7 +19,7 @@ export default async ({ name, payload }) => {
   switch (name) {
     case 'boot': {
       if (store.password) {
-        return unlock();
+        return await unlock();
       } else {
         const addresses = cache('addresses') || [];
         const addressesInfo = cache('addressesInfo') || {};
@@ -38,7 +39,7 @@ export default async ({ name, payload }) => {
 
     case 'unlock': {
       store.password = payload.password;
-      return unlock();
+      return await unlock();
     }
 
     case 'register': {
@@ -46,10 +47,7 @@ export default async ({ name, payload }) => {
       let mnemonic, encryptedMnemonic, w;
       try {
         mnemonic = wallet.createMnemonics();
-        encryptedMnemonic = window.CryptoJS.AES.encrypt(
-          mnemonic,
-          password
-        ).toString();
+        encryptedMnemonic = await pwd.encrypt(password, mnemonic);
         w = wallet.deriveAddress({
           mnemonics: mnemonic,
           index: currentAccountIndex,
@@ -89,10 +87,7 @@ export default async ({ name, payload }) => {
       let encryptedMnemonic, w;
 
       try {
-        encryptedMnemonic = window.CryptoJS.AES.encrypt(
-          mnemonic,
-          password
-        ).toString();
+        encryptedMnemonic = await pwd.encrypt(password, mnemonic);
 
         w = wallet.deriveAddress({
           mnemonics: mnemonic,
@@ -412,17 +407,14 @@ export default async ({ name, payload }) => {
   }
 };
 
-function unlock() {
+async function unlock() {
   const encryptedMnemonic = cache('encryptedMnemonic');
   const addresses = cache('addresses') || [];
   const currentAccountIndex = cache('currentAccountIndex');
   const addressesInfo = cache('addressesInfo') || {};
   let mnemonic, w;
   try {
-    mnemonic = window.CryptoJS.AES.decrypt(
-      encryptedMnemonic,
-      store.password
-    ).toString(window.CryptoJS.enc.Utf8);
+    mnemonic = await pwd.decrypt(store.password, encryptedMnemonic);
     w = wallet.deriveAddress({
       mnemonics: mnemonic,
       index: currentAccountIndex,

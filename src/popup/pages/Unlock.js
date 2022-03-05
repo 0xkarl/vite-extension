@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
 
 function Unlock() {
   const classes = useStyles();
-  const { setError, unlock } = useVite();
+  const { setError, unlock, logOut } = useVite();
 
   function onSubmit(e) {
     e.preventDefault();
@@ -21,6 +21,14 @@ function Unlock() {
 
     setError(null);
     unlock(password);
+  }
+
+  function onImport(e) {
+    e.preventDefault();
+
+    setError(null);
+    logOut();
+    router.push('/import');
   }
 
   return (
@@ -39,9 +47,18 @@ function Unlock() {
           fullWidth
           required
         />
-        <Box mt={3}>
+        <Box className="flex items-center" mt={3}>
           <Button variant="outlined" size="small" type="submit">
             Unlock
+          </Button>
+          <Box mx={1}>or</Box>
+          <Button
+            variant="outlined"
+            size="small"
+            type="button"
+            onClick={onImport}
+          >
+            Import New
           </Button>
         </Box>
       </form>
