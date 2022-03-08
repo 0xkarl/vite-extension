@@ -12,11 +12,11 @@ export default async (message, sender) => {
   console.log('cs %s', method);
   switch (method) {
     case 'eth_accounts': {
-      return getDomainAccounts(origin);
+      return await getDomainAccounts(origin);
     }
 
     case 'eth_requestAccounts': {
-      const accounts = getDomainAccounts(origin);
+      const accounts = await getDomainAccounts(origin);
       if (accounts.length) {
         return accounts;
       }
@@ -88,7 +88,7 @@ export default async (message, sender) => {
       const { chainId, networkVersion } = getCurrentNetwork();
       return {
         isUnlocked: !store.locked,
-        accounts: getDomainAccounts(origin),
+        accounts: await getDomainAccounts(origin),
         chainId,
         networkVersion,
       };

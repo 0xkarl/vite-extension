@@ -21,9 +21,9 @@ export default async ({ name, payload }) => {
       if (store.password) {
         return await unlock();
       } else {
-        const addresses = cache('addresses') || [];
-        const addressesInfo = cache('addressesInfo') || {};
-        const currentAccountIndex = cache('currentAccountIndex');
+        const addresses = (await cache('addresses')) || [];
+        const addressesInfo = (await cache('addressesInfo')) || {};
+        const currentAccountIndex = await cache('currentAccountIndex');
         store.locked = true;
         return {
           isReady: true,
@@ -67,10 +67,10 @@ export default async ({ name, payload }) => {
         [store.wallet.address]: { name: `Account ${currentAccountIndex + 1}` },
       };
 
-      cache('encryptedMnemonic', encryptedMnemonic);
-      cache('currentAccountIndex', currentAccountIndex);
-      cache('addresses', addresses);
-      cache('addressesInfo', addressesInfo);
+      await cache('encryptedMnemonic', encryptedMnemonic);
+      await cache('currentAccountIndex', currentAccountIndex);
+      await cache('addresses', addresses);
+      await cache('addressesInfo', addressesInfo);
 
       setupBalances();
 
@@ -108,10 +108,10 @@ export default async ({ name, payload }) => {
         [store.wallet.address]: { name: `Account ${currentAccountIndex + 1}` },
       };
 
-      cache('encryptedMnemonic', encryptedMnemonic);
-      cache('currentAccountIndex', currentAccountIndex);
-      cache('addresses', addresses);
-      cache('addressesInfo', addressesInfo);
+      await cache('encryptedMnemonic', encryptedMnemonic);
+      await cache('currentAccountIndex', currentAccountIndex);
+      await cache('addresses', addresses);
+      await cache('addressesInfo', addressesInfo);
 
       setupBalances();
 
@@ -134,10 +134,10 @@ export default async ({ name, payload }) => {
     case 'logOut': {
       store.password = null;
       store.locked = true;
-      cache('encryptedMnemonic', null);
-      cache('currentAccountIndex', null);
-      cache('addresses', []);
-      cache('addressesInfo', {});
+      await cache('encryptedMnemonic', null);
+      await cache('currentAccountIndex', null);
+      await cache('addresses', []);
+      await cache('addressesInfo', {});
       return {
         locked: store.locked,
         addresses: [],
@@ -149,8 +149,8 @@ export default async ({ name, payload }) => {
 
     case 'createAccount': {
       const { mnemonic } = store;
-      const addresses = cache('addresses') || [];
-      const addressesInfo = cache('addressesInfo') || {};
+      const addresses = (await cache('addresses')) || [];
+      const addressesInfo = (await cache('addressesInfo')) || {};
       const currentAccountIndex = addresses.length;
 
       store.wallet = wallet.deriveAddress({
@@ -161,9 +161,9 @@ export default async ({ name, payload }) => {
       addresses.push(address);
       addressesInfo[address] = { name: `Account ${currentAccountIndex + 1}` };
 
-      cache('currentAccountIndex', currentAccountIndex);
-      cache('addresses', addresses);
-      cache('addressesInfo', addressesInfo);
+      await cache('currentAccountIndex', currentAccountIndex);
+      await cache('addresses', addresses);
+      await cache('addressesInfo', addressesInfo);
 
       setupBalances();
 
@@ -179,14 +179,14 @@ export default async ({ name, payload }) => {
       const { address } = payload;
       const { mnemonic } = store;
 
-      const addresses = cache('addresses');
+      const addresses = await cache('addresses');
 
       const currentAccountIndex = addresses.indexOf(address);
       store.wallet = wallet.deriveAddress({
         mnemonics: mnemonic,
         index: currentAccountIndex,
       });
-      cache('currentAccountIndex', currentAccountIndex);
+      await cache('currentAccountIndex', currentAccountIndex);
 
       broadcastAccountChange();
       setupBalances();
@@ -210,13 +210,13 @@ export default async ({ name, payload }) => {
       const { network } = store;
       return {
         network,
-        networks: getNetworks(),
+        networks: await getNetworks(),
       };
     }
 
     case 'switchNetwork': {
       const { network } = payload;
-      switchNetwork(network);
+      await switchNetwork(network);
       setupBalances();
       return {
         network,
@@ -230,12 +230,12 @@ export default async ({ name, payload }) => {
         jsonrpc,
         data: { origin, address },
       } = payload;
-      const domains = cache('domains') || {};
+      const domains = (await cache('domains')) || {};
       domains[origin] = domains[origin] || {};
       domains[origin].accounts = domains[origin].accounts || [];
       // domains[origin].accounts.push(address);
       domains[origin].accounts = [address];
-      cache('domains', domains);
+      await cache('domains', domains);
       chrome.tabs.sendMessage(tabId, {
         target: 'vite-contentscript',
         data: {
@@ -284,7 +284,7 @@ export default async ({ name, payload }) => {
 
     case 'getAccountIsConnectedToDomain': {
       const { origin } = payload;
-      const accounts = getDomainAccounts(origin);
+      const accounts = await getDomainAccounts(origin);
       return { connected: !!accounts.length };
     }
 
@@ -313,7 +313,7 @@ export default async ({ name, payload }) => {
       const result = await block.sign().send();
 
       const hash = result.hash;
-      const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
+      const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
     }
 
@@ -343,11 +343,11 @@ export default async ({ name, payload }) => {
     }
 
     case 'saveAccountName': {
-      const addressesInfo = cache('addressesInfo') || {};
+      const addressesInfo = (await cache('addressesInfo')) || {};
       const { address, name } = payload;
       addressesInfo[address] = addressesInfo[address] || {};
       addressesInfo[address].name = name;
-      cache('addressesInfo', addressesInfo);
+      await cache('addressesInfo', addressesInfo);
       return { addressesInfo };
     }
 
@@ -357,7 +357,7 @@ export default async ({ name, payload }) => {
         throw new Error('Pass do not match');
       }
       const { mnemonic } = store;
-      const addresses = cache('addresses');
+      const addresses = await cache('addresses');
       const accountIndex = addresses.indexOf(address);
       const { privateKey } = wallet.deriveAddress({
         mnemonics: mnemonic,
@@ -383,12 +383,12 @@ export default async ({ name, payload }) => {
       const result = await block.sign().send();
 
       const hash = result.hash;
-      const txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
+      const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
     }
 
     case 'addNetwork': {
-      const networks = cache('networks') || [];
+      const networks = (await cache('networks')) || [];
       for (let i = 0; i < networks.length; i++) {
         const n = networks[i];
         if (n.name === payload.name) {
@@ -397,8 +397,8 @@ export default async ({ name, payload }) => {
       }
       const id = uuid();
       const network = { id, ...payload };
-      cache('networks', [...networks, network]);
-      switchNetwork(id);
+      await cache('networks', [...networks, network]);
+      await switchNetwork(id);
       return {};
     }
 
@@ -408,10 +408,10 @@ export default async ({ name, payload }) => {
 };
 
 async function unlock() {
-  const encryptedMnemonic = cache('encryptedMnemonic');
-  const addresses = cache('addresses') || [];
-  const currentAccountIndex = cache('currentAccountIndex');
-  const addressesInfo = cache('addressesInfo') || {};
+  const encryptedMnemonic = await cache('encryptedMnemonic');
+  const addresses = (await cache('addresses')) || [];
+  const currentAccountIndex = await cache('currentAccountIndex');
+  const addressesInfo = (await cache('addressesInfo')) || {};
   let mnemonic, w;
   try {
     mnemonic = await pwd.decrypt(store.password, encryptedMnemonic);

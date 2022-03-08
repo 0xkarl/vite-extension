@@ -34,21 +34,25 @@ export const NULL_ADDRESS = '0'.repeat(64);
 
 let BALANCE_UNSUBS = [];
 
-switchNetwork(cache('network') || 'mainnet');
+main();
 
-export function switchNetwork(networkId) {
-  const { rpcUrl } = getNetwork(networkId);
+async function main() {
+  await switchNetwork((await cache('network')) || 'mainnet');
+}
+
+export async function switchNetwork(networkId) {
+  const { rpcUrl } = await getNetwork(networkId);
   store.network = networkId;
   store.client = new ViteAPI(new HTTP_RPC(rpcUrl));
-  cache('network', networkId);
+  await cache('network', networkId);
 }
 
-export function getNetworks() {
-  return NETWORKS.concat(cache('networks') || []);
+export async function getNetworks() {
+  return NETWORKS.concat((await cache('networks')) || []);
 }
 
-export function getNetwork(networkId) {
-  const networks = getNetworks();
+export async function getNetwork(networkId) {
+  const networks = await getNetworks();
   for (let i = 0; i < networks.length; i++) {
     const n = networks[i];
     if (n.id === networkId) {
@@ -215,53 +219,59 @@ export const getTransactions = async function () {
 
   console.log({ accountBlocks });
 
-  return accountBlocks
-    .map(
-      ({
-        blockType,
-        fromAddress,
-        toAddress,
-        amount,
-        hash,
-        tokenInfo,
-        timestamp,
-      }) => {
-        const txn = { hash };
-        txn.txBlockExplorerUrl = getTxBlockExplorerUrl(hash);
-        txn.date = moment.unix(timestamp).local().format('MMM D, HH:mm');
+  if (!accountBlocks) {
+    return [];
+  }
 
-        switch (blockType) {
-          // 1->request(create contract).
-          // 2->request(transfer).
-          // 3->request(re-issue token).
-          // 4->response.
-          // 5->response(failed).
-          // 6->request(refund by contract).
-          // 7->response(genesis).
+  const ret = [];
 
-          case 2: {
-            txn.description = `Sent to ${shortedAddress(toAddress)}`;
-            txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
-            txn.token = tokenInfo.tokenSymbol;
-            return txn;
-          }
+  for (let j = 0; j < accountBlocks.length; j++) {
+    const {
+      blockType,
+      fromAddress,
+      toAddress,
+      amount,
+      hash,
+      tokenInfo,
+      timestamp,
+    } = accountBlocks[j];
 
-          case 4: {
-            txn.description = `Received from ${shortedAddress(fromAddress)}`;
-            txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
-            txn.token = tokenInfo.tokenSymbol;
-            return txn;
-          }
+    const txn = { hash };
+    txn.txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
+    txn.date = moment.unix(timestamp).local().format('MMM D, HH:mm');
 
-          default:
-        }
+    switch (blockType) {
+      // 1->request(create contract).
+      // 2->request(transfer).
+      // 3->request(re-issue token).
+      // 4->response.
+      // 5->response(failed).
+      // 6->request(refund by contract).
+      // 7->response(genesis).
+
+      case 2: {
+        txn.description = `Sent to ${shortedAddress(toAddress)}`;
+        txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
+        txn.token = tokenInfo.tokenSymbol;
+        return ret.push(txn);
       }
-    )
-    .filter((txn) => !!txn);
+
+      case 4: {
+        txn.description = `Received from ${shortedAddress(fromAddress)}`;
+        txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
+        txn.token = tokenInfo.tokenSymbol;
+        return ret.push(txn);
+      }
+
+      default:
+    }
+  }
+
+  return ret.filter((txn) => !!txn);
 };
 
-export function getTxBlockExplorerUrl(hash, networkId) {
+export async function getTxBlockExplorerUrl(hash, networkId) {
   networkId = networkId || store.network;
-  const { rpcUrl } = getNetwork(networkId);
+  const { rpcUrl } = await getNetwork(networkId);
   return rpcUrl + hash;
 }
