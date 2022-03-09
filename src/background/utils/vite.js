@@ -253,14 +253,16 @@ export const getTransactions = async function () {
         txn.description = `Sent to ${shortedAddress(toAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
-        return ret.push(txn);
+        ret.push(txn);
+        break;
       }
 
       case 4: {
         txn.description = `Received from ${shortedAddress(fromAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
-        return ret.push(txn);
+        ret.push(txn);
+        break;
       }
 
       default:

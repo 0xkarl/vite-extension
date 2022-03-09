@@ -1,4 +1,4 @@
-import { wallet, accountBlock } from '@vite/vitejs';
+import { wallet, accountBlock, utils } from '@vite/vitejs';
 import pwd from 'browser-passworder';
 import {
   store,
@@ -295,8 +295,7 @@ export default async ({ name, payload }) => {
 
     case 'sendToken': {
       const {
-        wallet: { address, privateKey },
-        client,
+        wallet: { address },
       } = store;
       const { tokenId, recipient, amount, decimals, data = null } = payload;
       const block = accountBlock.createAccountBlock('send', {
@@ -307,11 +306,7 @@ export default async ({ name, payload }) => {
         amount: toBig(amount).times(Math.pow(10, decimals)).toString(),
         // data,
       });
-
-      block.setProvider(client).setPrivateKey(privateKey);
-      await block.autoSetPreviousAccountBlock();
-      const result = await block.sign().send();
-
+      const result = signAndSendBlock(block);
       const hash = result.hash;
       const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
@@ -319,21 +314,14 @@ export default async ({ name, payload }) => {
 
     case 'confirmTx': {
       const {
-        wallet: { address, privateKey },
-        client,
+        wallet: { address },
       } = store;
       const { type, params } = payload;
-
-      const block = accountBlock
-        .createAccountBlock(type, {
-          ...params,
-          address,
-        })
-        .setProvider(client)
-        .setPrivateKey(privateKey);
-      await block.autoSetPreviousAccountBlock();
-      const result = await block.sign().send();
-
+      const block = accountBlock.createAccountBlock(type, {
+        ...params,
+        address,
+      });
+      const result = signAndSendBlock(block);
       return result;
     }
 
@@ -368,20 +356,14 @@ export default async ({ name, payload }) => {
 
     case 'receiveToken': {
       const {
-        wallet: { address, privateKey },
-        client,
+        wallet: { address },
       } = store;
       const { sendBlockHash } = payload;
-
       const block = accountBlock.createAccountBlock('receive', {
         address,
         sendBlockHash,
       });
-
-      block.setProvider(client).setPrivateKey(privateKey);
-      await block.autoSetPreviousAccountBlock();
-      const result = await block.sign().send();
-
+      const result = signAndSendBlock(block);
       const hash = result.hash;
       const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
@@ -437,4 +419,45 @@ async function unlock() {
     addresses,
     addressesInfo,
   };
+}
+
+async function signAndSendBlock(block) {
+  const {
+    wallet: { privateKey },
+    client,
+  } = store;
+
+  block.setProvider(client).setPrivateKey(privateKey);
+  await block.autoSetPreviousAccountBlock();
+
+  // get difficulty
+  const { difficulty } = await client.request('ledger_getPoWDifficulty', {
+    address: block.address,
+    previousHash: block.previousHash,
+    blockType: block.blockType,
+    toAddress: block.toAddress,
+    data: block.data,
+  });
+
+  // if difficulty is null,
+  // it indicates the account has enough quota to send the transaction
+  // there is no need to do PoW
+  if (difficulty) {
+    // Call GVite-RPC API to calculate nonce from difficulty
+    const getNonceHashBuffer = Buffer.from(
+      block.originalAddress + block.previousHash,
+      'hex'
+    );
+    const getNonceHash = utils.blake2bHex(getNonceHashBuffer, null, 32);
+    const nonce = await client.request(
+      'util_getPoWNonce',
+      difficulty,
+      getNonceHash
+    );
+
+    block.setDifficulty(difficulty);
+    block.setNonce(nonce);
+  }
+
+  return await block.sign().send();
 }

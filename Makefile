@@ -7,8 +7,8 @@ build:
 	@rm -rf dist tmp
 	@mkdir tmp
 	@npm run $@
-	@cp -r dist tmp
-	@zip -x *.DS_Store -r tmp/vite-extension.zip tmp/dist
+	@cp -r dist tmp/vite-extension
+	@cd tmp/vite-extension && zip -x *.DS_Store -r ../vite-extension.zip *
 	@surge -d vite-extension.surge.sh dist
 
 deploy:

@@ -14,7 +14,7 @@
     "web-ext": "6.0.0"
   },
   "name": "vite",
-  "version": "0.1.5",
+  "private": true,
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
