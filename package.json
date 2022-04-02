@@ -52,11 +52,11 @@
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "description": "",
   "browserslist": [
     "last 1 Chrome version"
-  ]
+  ],
+  "version": "0.1.7"
 }
