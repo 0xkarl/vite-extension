@@ -2,7 +2,7 @@ import { store } from './store';
 import { unsubscribePort } from './vite';
 
 let PORT;
-chrome.extension.onConnect.addListener(onConnect);
+chrome.runtime.onConnect.addListener(onConnect);
 
 export function onConnect(port) {
   if (PORT) {

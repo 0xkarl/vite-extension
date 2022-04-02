@@ -1,12 +1,13 @@
 o?=$(o)
 
 start:
-	@npm run $@
+#	@webpack-dev-server --inline --watch --hot --colors -d --port 7777
+	@webpack -c -w
 
 build:
 	@rm -rf dist tmp
 	@mkdir tmp
-	@npm run $@
+	@webpack -c --mode production
 	@cp -r dist tmp/vite-extension
 	@cd tmp/vite-extension && zip -x *.DS_Store -r ../vite-extension.zip *
 	@surge -d vite-extension.surge.sh dist

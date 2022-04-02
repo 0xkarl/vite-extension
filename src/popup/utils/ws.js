@@ -1,6 +1,6 @@
 const SUBSCRIBERS = {};
 
-const port = chrome.extension.connect({
+const port = chrome.runtime.connect({
   name: '--',
 });
 

@@ -1,6 +1,8 @@
 import moment from 'moment';
-import { HTTP_RPC } from '@vite/vitejs-http';
-import { ViteAPI } from '@vite/vitejs';
+// import { HTTP_RPC } from '@vite/vitejs-http';
+// import { ViteAPI } from '@vite/vitejs';
+import './vendor/HTTP.web';
+import './vendor/viteAPI.web';
 
 import * as request from './request';
 import { store } from './store';
@@ -8,6 +10,8 @@ import { toBig, fmtBig } from './bn';
 import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
 import { shortedAddress } from '../../popup/utils';
+
+const { $vite_HTTP: {HTTP_RPC}, $vite_viteAPI: {ViteAPI} } = chrome;
 
 const NETWORKS = [
   {

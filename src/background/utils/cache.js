@@ -1,4 +1,4 @@
-const extension = window.chrome || window.extension;
+const extension = chrome; // window.chrome || window.extension;
 
 export function cache(k, v) {
   const { local } = extension.storage; // eslint-disable-line

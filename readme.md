@@ -34,21 +34,21 @@ On a new tab, launch a chrome session pre-installed with the extension. The chro
 - [x] Create account
 - [x] Import account
 - [x] Add accounts in same derivation path scheme
-- [x] Network switch. Support mainnet and testnet.
+- [x] Network switch. Support mainnet, testnet, local and custom.
 - [x] Export private key
 - [x] Export mnemonic
-- [ ] Add custom tokens
+- [x] Add custom tokens
 
 ### Injected script
 
 - [x] Request connected accounts
 - [x] Request connect new account + domain
 - [x] Request createAccountBlock request
-- [ ] Emit popup changes: account, chain etc
+- [x] Emit popup changes: account, chain etc
 
 ### Background
 
-- [x] Load and subsribe to current account VITE balances
+- [x] Load and subscribe to current account VITE balances
 
 ## Demo walk-through
 

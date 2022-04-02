@@ -421,6 +421,8 @@ async function unlock() {
   };
 }
 
+// sign and broadcast an account `block`
+// fallback to pow option if out of quota
 async function signAndSendBlock(block) {
   const {
     wallet: { privateKey },
@@ -443,7 +445,6 @@ async function signAndSendBlock(block) {
   // it indicates the account has enough quota to send the transaction
   // there is no need to do PoW
   if (difficulty) {
-    // Call GVite-RPC API to calculate nonce from difficulty
     const getNonceHashBuffer = Buffer.from(
       block.originalAddress + block.previousHash,
       'hex'
@@ -454,7 +455,6 @@ async function signAndSendBlock(block) {
       difficulty,
       getNonceHash
     );
-
     block.setDifficulty(difficulty);
     block.setNonce(nonce);
   }
