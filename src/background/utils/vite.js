@@ -11,7 +11,10 @@ import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
 import { shortedAddress } from '../../popup/utils';
 
-const { $vite_HTTP: {HTTP_RPC}, $vite_viteAPI: {ViteAPI} } = chrome;
+const {
+  $vite_HTTP: { HTTP_RPC },
+  $vite_viteAPI: { ViteAPI },
+} = chrome;
 
 const NETWORKS = [
   {
