@@ -39,7 +39,6 @@ function Header() {
     addresses,
     addressesInfo,
     createAccount,
-    logOut,
     lock,
     switchAccount,
   } = useVite();
@@ -205,9 +204,6 @@ function Header() {
 
             <div className="cursor-pointer" onClick={lock}>
               Lock
-            </div>
-            <div className="cursor-pointer" onClick={logOut}>
-              Log Out
             </div>
           </Box>
         </Menu>
