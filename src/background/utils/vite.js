@@ -37,6 +37,27 @@ const NETWORKS = [
   },
 ];
 
+const DEFAULT_TOKENS = {
+  tti_5649544520544f4b454e6e40: {
+    tokenInfo: {
+      tokenName: 'VITE',
+      tokenSymbol: 'VITE',
+      decimals: 18,
+      tokenId: 'tti_5649544520544f4b454e6e40',
+    },
+    balance: '0',
+  },
+  tti_564954455820434f494e69b5: {
+    tokenInfo: {
+      tokenName: 'ViteX Coin',
+      tokenSymbol: 'VX',
+      decimals: 18,
+      tokenId: 'tti_564954455820434f494e69b5',
+    },
+    balance: '0',
+  },
+};
+
 export const NULL_ADDRESS = '0'.repeat(64);
 
 let BALANCE_UNSUBS = [];
@@ -103,12 +124,16 @@ async function subscribeToBalanceChanges() {
 
 async function updateBalances() {
   const balanceInfo = await getBalanceInfo();
-  // console.log(balanceInfo);
+
+  const received = balanceInfo.balance?.balanceInfoMap ?? {};
+  Object.entries(DEFAULT_TOKENS).forEach(([defaultTokenId, defaultToken]) => {
+    if (!received[defaultTokenId]) {
+      received[defaultTokenId] = defaultToken;
+    }
+  });
+
   await Promise.all([
-    getBalance(
-      'balances',
-      Object.values(balanceInfo.balance?.balanceInfoMap ?? {})
-    ),
+    getBalance('balances', Object.values(received)),
     getBalance('unreceived', balanceInfo.unreceived),
   ]);
 
