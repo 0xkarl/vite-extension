@@ -281,6 +281,6 @@ export const getTransactions = async function () {
 
 export async function getTxBlockExplorerUrl(hash, networkId) {
   networkId = networkId || store.network;
-  const { rpcUrl } = await getNetwork(networkId);
-  return rpcUrl + hash;
+  const { blockExplorerUrl } = await getNetwork(networkId);
+  return blockExplorerUrl + hash;
 }
