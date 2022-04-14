@@ -11,11 +11,11 @@ export default async (message, sender) => {
   const { id, jsonrpc, method, params = [] } = message.data;
   console.log('cs %s', method);
   switch (method) {
-    case 'eth_accounts': {
+    case 'vite_accounts': {
       return await getDomainAccounts(origin);
     }
 
-    case 'eth_requestAccounts': {
+    case 'vite_requestAccounts': {
       const accounts = await getDomainAccounts(origin);
       if (accounts.length) {
         return accounts;
@@ -44,17 +44,17 @@ export default async (message, sender) => {
       return null; // noop
     }
 
-    case 'eth_chainId': {
+    case 'vite_chainId': {
       const { chainId } = getCurrentNetwork();
       return chainId;
     }
 
-    case 'eth_networkVersion': {
+    case 'vite_networkVersion': {
       const { networkVersion } = getCurrentNetwork();
       return networkVersion;
     }
 
-    case 'eth_createAccountBlock': {
+    case 'vite_createAccountBlock': {
       const tx = params;
 
       const tabId = await getActiveTabId();

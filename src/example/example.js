@@ -36,7 +36,7 @@ async function loadConnectedWallet() {
     return console.warn('window.vite not injected');
   }
   const [account] = await window.vite.request({
-    method: 'eth_accounts',
+    method: 'vite_accounts',
   });
   if (!account) {
     return;
@@ -49,7 +49,7 @@ async function onConnect() {
     return alert('window.vite not injected');
   }
   const [account] = await window.vite.request({
-    method: 'eth_requestAccounts',
+    method: 'vite_requestAccounts',
   });
   if (!account) {
     return;
@@ -70,7 +70,7 @@ async function loadAccount(account) {
 async function setupClient() {
   chainId = parseInt(
     await window.vite.request({
-      method: 'eth_chainId',
+      method: 'vite_chainId',
     })
   );
   networkLabel.innerText =
@@ -127,7 +127,7 @@ async function sendBalance(toAddress, amount) {
       : 'vite_39adf1cfd298a7b73ec44d154d85c8ffd442c597945bac089e';
 
   const result = await window.vite.request({
-    method: 'eth_createAccountBlock',
+    method: 'vite_createAccountBlock',
     params: {
       type: 'callContract',
       params: JSON.stringify({

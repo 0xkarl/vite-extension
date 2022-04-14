@@ -17,37 +17,37 @@ This submits RPC requests to the Vite blockchain. It returns a Promise that reso
 
 where method can be:
 
-### eth_accounts
+### vite_accounts
 
 Returns a list of the current connected account addresses. E.g.
 
 ```js
 const [account] = await window.vite.request({
-  method: 'eth_accounts',
+  method: 'vite_accounts',
 });
 console.log(account); // vite_553462bca137bac29f440e9af4ab2e2c1bb82493e41d2bc8b2
 ```
 
-### eth_requestAccounts
+### vite_requestAccounts
 
-It is the same as `eth_accounts` above, but prompts the user to connect the current account if not already done so.
+It is the same as `vite_accounts` above, but prompts the user to connect the current account if not already done so.
 
 ```js
 const [account] = await window.vite.request({
-  method: 'eth_requestAccounts',
+  method: 'vite_requestAccounts',
 });
 console.log(account); // vite_553462bca137bac29f440e9af4ab2e2c1bb82493e41d2bc8b2
 ```
 
 <img src="https://vite-extension.surge.sh/app_screenshots/connect.png" alt="vite" width=300 />
 
-### eth_createAccountBlock
+### vite_createAccountBlock
 
-Similar to `eth_sendTransaction` on MetaMask. This prompts the user to confirm an account block transaction. Once the user confirms the transaction, it proceeds to sign and broadcast the transaction to the current network blockchain. For example, an operation to interact with a deployed contract would be:
+Similar to `vite_sendTransaction` on MetaMask. This prompts the user to confirm an account block transaction. Once the user confirms the transaction, it proceeds to sign and broadcast the transaction to the current network blockchain. For example, an operation to interact with a deployed contract would be:
 
 ```js
 const result = await window.vite.request({
-  method: 'eth_createAccountBlock',
+  method: 'vite_createAccountBlock',
   params: {
     type: 'callContract',
     params: JSON.stringify({
@@ -63,24 +63,24 @@ const result = await window.vite.request({
 
 <img src="https://vite-extension.surge.sh/app_screenshots/confirm_tx.png" alt="vite" width=300 />
 
-### eth_chainId
+### vite_chainId
 
 Returns the `chainId` of the current network as a hexadecimal. `0x1` (`1`) means mainnet.
 
 ```js
 const chainIdHex = await window.vite.request({
-  method: 'eth_chainId',
+  method: 'vite_chainId',
 }); // 0x1
 console.log(parseInt(chainIdHex)); // 1
 ```
 
-### eth_networkVersion
+### vite_networkVersion
 
 Returns the `networkVersion` of the current network. Always prefer `chainId` above, over `networkVersion`.
 
 ```js
 const networkVersion = await window.vite.request({
-  method: 'eth_networkVersion',
+  method: 'vite_networkVersion',
 });
 console.log(networkVersion); // mainnet
 ```
