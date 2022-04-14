@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import Menu from '@material-ui/core/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
 import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
 import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 
-import { send, sleep, shortedAddress } from '../../utils';
+import { send } from '../../utils';
 import { useVite } from '../../contexts/Vite';
 
 const useStyles = makeStyles(() => ({
@@ -43,7 +42,7 @@ function Header() {
     switchAccount,
   } = useVite();
 
-  const [{ copied, network, networks, searchedAddresses }, _update] = useState({
+  const [{ network, networks, searchedAddresses }, _update] = useState({
     searchedAddresses: [],
     networks: [],
   });
@@ -67,7 +66,9 @@ function Header() {
           ...(await send('getNetwork')),
           searchedAddresses: addresses,
         });
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     };
     load();
   }, [addresses]);
@@ -76,21 +77,9 @@ function Header() {
     update(await send('switchNetwork', { network }));
   }
 
-  async function copy() {
-    navigator.clipboard.writeText(address);
-    update({ copied: true });
-    await sleep(1000);
-    update({ copied: false });
-  }
-
   function goToSettings() {
     hideMenu();
     router.push('/settings');
-  }
-
-  function goToTransactions() {
-    hideMenu();
-    router.push('/transactions');
   }
 
   function onSearch(e) {
@@ -111,23 +100,7 @@ function Header() {
     <Box className={classes.container}>
       <div className="menu flex flex-col flex-grow mb-2">
         <div className="flex flex-grow">
-          <div className="flex flex-grow">
-            <div>
-              <Tooltip title="Copy" arrow>
-                <div className="cursor-pointer" onClick={copy}>
-                  {addressesInfo[address].name} ({shortedAddress(address)})
-                  {copied ? '✓' : null}
-                </div>
-              </Tooltip>
-            </div>
-            <div className="mx-1">/</div>
-            <div
-              className="cursor-pointer underline"
-              onClick={() => router.push(`/account/${address}`)}
-            >
-              edit
-            </div>
-          </div>
+          <div className="flex flex-grow">{network}</div>
           <SettingsIcon className="cursor-pointer" onClick={showMenu} />
         </div>
 
@@ -196,12 +169,6 @@ function Header() {
             <div className="cursor-pointer" onClick={goToSettings}>
               Settings
             </div>
-            <div className="cursor-pointer" onClick={goToTransactions}>
-              Transactions
-            </div>
-
-            <div className={classes.sep}></div>
-
             <div className="cursor-pointer" onClick={lock}>
               Lock
             </div>

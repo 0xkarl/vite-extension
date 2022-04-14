@@ -21,19 +21,19 @@ const NETWORKS = [
     id: 'mainnet',
     name: 'Mainnet',
     rpcUrl: 'https://node.vite.net/gvite',
-    blockExplorerUrl: 'https://viteview.xyz/#/tx/',
+    blockExplorerUrl: 'https://viteview.xyz/#',
   },
   {
     id: 'testnet',
     name: 'Testnet',
     rpcUrl: 'https://buidl.vite.net/gvite',
-    blockExplorerUrl: 'https://buidl.viteview.xyz/#/tx/',
+    blockExplorerUrl: 'https://buidl.viteview.xyz/#',
   },
   {
     id: 'local',
     name: 'Local',
     rpcUrl: 'http://127.0.0.1:23456',
-    blockExplorerUrl: 'http://localhost:9999/#/tx/',
+    blockExplorerUrl: 'http://localhost:9999/#',
   },
 ];
 
@@ -237,7 +237,7 @@ export const getTokenInfo = async function (tokenAddresses) {
   }, {});
 };
 
-export const getTransactions = async function () {
+export const getTransactions = async function (token) {
   const {
     wallet: { address },
   } = store;
@@ -285,7 +285,9 @@ export const getTransactions = async function () {
         txn.description = `Sent to ${shortedAddress(toAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
-        ret.push(txn);
+        if (!token || txn.token === token) {
+          ret.push(txn);
+        }
         break;
       }
 
@@ -293,7 +295,9 @@ export const getTransactions = async function () {
         txn.description = `Received from ${shortedAddress(fromAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
-        ret.push(txn);
+        if (!token || txn.token === token) {
+          ret.push(txn);
+        }
         break;
       }
 
@@ -307,5 +311,5 @@ export const getTransactions = async function () {
 export async function getTxBlockExplorerUrl(hash, networkId) {
   networkId = networkId || store.network;
   const { blockExplorerUrl } = await getNetwork(networkId);
-  return blockExplorerUrl + hash;
+  return blockExplorerUrl + '/tx/' + hash;
 }

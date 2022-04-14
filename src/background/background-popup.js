@@ -330,7 +330,7 @@ export default async ({ name, payload }) => {
     }
 
     case 'getTransactions': {
-      const transactions = await getTransactions();
+      const transactions = await getTransactions(payload.token);
       return { transactions };
     }
 

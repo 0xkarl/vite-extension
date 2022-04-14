@@ -1,11 +1,14 @@
+import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 
 import { useVite } from '../../contexts/Vite';
+import { BORDER_RADIUS } from '../../utils';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
-    color: 'red',
+    background: '#ffd9db',
+    borderRadius: BORDER_RADIUS,
   },
 }));
 
@@ -13,9 +16,9 @@ function Error() {
   const classes = useStyles();
   const { error } = useVite();
 
-  return (
-    <Box className={classes.container}>
-      {!error ? null : <div>{error.message}</div>}
+  return !error ? null : (
+    <Box className={classes.container} p={2} mb={2}>
+      {error.message}
     </Box>
   );
 }

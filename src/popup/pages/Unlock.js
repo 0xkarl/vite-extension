@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Box, TextField, Dialog, Button, Typography } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 import { useVite } from '../contexts/Vite';
 import Heading from '../components/shared/Heading';
+import { BORDER_RADIUS } from '../utils';
 
 const useStyles = makeStyles(() => ({
   container: {},
+  warning: {
+    background: '#ffd9db',
+    borderRadius: BORDER_RADIUS,
+  },
 }));
 
 function Unlock() {
@@ -50,7 +59,13 @@ function Unlock() {
           required
         />
         <Box className="flex items-center" mt={3}>
-          <Button variant="outlined" size="small" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            type="submit"
+            disableElevation
+          >
             Unlock
           </Button>
         </Box>
@@ -72,14 +87,14 @@ function Unlock() {
           <Typography variant="h6" className="text-center">
             Resetting Wallet
           </Typography>
-          <Box mt={1}>
+          <Box mt={1} px={2} py={1} className={classes.warning}>
             Completing this action will remove all data from your current
             wallet, including your secret recovery phrase.
             <br />
             Make sure to save your current seed phrase to gain control of your
             wallet in the future.
           </Box>
-          <Box className="flex justify-between" mt={1}>
+          <Box className="flex justify-between" mt={2}>
             <Button
               variant="outlined"
               size="small"
@@ -90,7 +105,7 @@ function Unlock() {
             <Button
               variant="contained"
               size="small"
-              color="primary"
+              color="secondary"
               onClick={onImport}
               disableElevation
             >

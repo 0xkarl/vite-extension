@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router-dom';
 
 import { useVite } from '../contexts/Vite';
-import { send, getQueryParams, sleep } from '../utils';
+import { sleep } from '../utils';
 import Heading from '../components/shared/Heading';
 
 const useStyles = makeStyles(() => ({

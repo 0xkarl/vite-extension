@@ -1,21 +1,19 @@
-import { Switch, Route, Redirect } from 'react-router';
+import React, { Switch, Route, Redirect } from 'react-router';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import { useVite } from '../../contexts/Vite';
-
 import Error from '../../components/shared/Error';
-
 import Unlock from '../../pages/Unlock';
 import Settings from '../../pages/Settings';
 import Connect from '../../pages/Connect';
 import Send from '../../pages/Send';
-import Transactions from '../../pages/Transactions';
 import Confirm from '../../pages/Confirm';
 import Account from '../../pages/Account';
 import Landing from '../../pages/Landing';
 import Import from '../../pages/Import';
 import Register from '../../pages/Register';
 import AddNetwork from '../../pages/AddNetwork';
+import Token from '../../pages/Token';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -47,10 +45,10 @@ function App() {
           <Route exact path="/settings" component={Settings} />
           <Route exact path="/connect" component={Connect} />
           <Route exact path="/send/:token" component={Send} />
-          <Route exact path="/transactions" component={Transactions} />
           <Route exact path="/confirm" component={Confirm} />
           <Route exact path="/account/:address" component={Account} />
-          <Route exact path="/landing" component={Landing} />
+          <Route exact path="/token/:token" component={Token} />
+          <Route path="/landing" component={Landing} />
           <Route exact path="/add-network" component={AddNetwork} />
           <Redirect to="/landing" />
         </Switch>

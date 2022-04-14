@@ -1,46 +1,71 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import { useHistory } from 'react-router-dom';
+import Tooltip from '@material-ui/core/Tooltip';
+import { Switch, Route, Link, NavLink } from 'react-router-dom';
 import clsx from 'clsx';
-import _flatten from 'lodash/flatten';
-import _orderBy from 'lodash/orderBy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPencil as editIcon,
+  faCopy as copyIcon,
+  faCheck as copiedIcon,
+  faArrowUpRightFromSquare as shareIcon,
+} from '@fortawesome/free-solid-svg-icons';
 
-import { fmtBig, send, subscribe } from '../utils';
+import {
+  BORDER_RADIUS,
+  fmtBig,
+  send,
+  subscribe,
+  shortedAddress,
+  sleep,
+} from '../utils';
 import { useVite } from '../contexts/Vite';
 import Header from '../components/shared/Header';
-import Heading from '../components/shared/Heading';
+import Tokens from './Tokens';
+import Transactions from './Transactions';
 
 const useStyles = makeStyles(() => ({
-  container: {
-    '& h3': {
-      fontSize: 18,
-    },
-
-    '& .grid': {
-      display: 'grid',
-      gridTemplateColumns: '50px 1fr 1fr 1fr',
-      gridRowGap: 10,
-      whiteSpace: 'pre',
-    },
-
-    '& button': {
-      padding: 0,
-      width: 50,
-      marginLeft: 20,
+  container: {},
+  blueBox: {
+    boxShadow: 'rgb(197 206 224) 0px 12px 20px -4px',
+    backgroundImage: 'linear-gradient(256.28deg, #1c94f4 0%, #1273ea 100%)',
+    borderRadius: BORDER_RADIUS,
+  },
+  content: {
+    height: 350,
+    overflowY: 'auto',
+  },
+  totalUSDBalance: {
+    fontSize: 30,
+  },
+  tabs: {
+    '& .active': {
+      color: '#006fe9',
+      fontWeight: 'bold',
     },
   },
 }));
 
 function Landing() {
   const classes = useStyles();
-  const { setError } = useVite();
+  const { address, addressesInfo, setError } = useVite();
   const [
-    { isLoaded, totalUSDBalance, balances, unreceived },
+    { copied, isLoaded, totalUSDBalance, networks, network },
     _update,
-  ] = useState({});
+  ] = useState({
+    networks: [],
+  });
   const update = (a) => _update((b) => ({ ...b, ...a }));
+
+  const networkConfig = useMemo(() => {
+    for (let i = 0; i < networks.length; i++) {
+      const n = networks[i];
+      if (n.id === network) {
+        return n;
+      }
+    }
+  }, [networks, network]);
 
   useEffect(() => {
     const unsubs = [];
@@ -54,6 +79,7 @@ function Landing() {
       update({
         isLoaded: true,
         ...(await send('getBalances')),
+        ...(await send('getNetwork')),
       });
     }
 
@@ -66,74 +92,92 @@ function Landing() {
     };
   }, []);
 
+  async function copy() {
+    navigator.clipboard.writeText(address);
+    update({ copied: true });
+    await sleep(1000);
+    update({ copied: false });
+  }
+
   return !isLoaded ? null : (
     <Box className={clsx(classes.container, 'flex flex-col')}>
       <Header />
-      <div>
+
+      <div
+        className={clsx(
+          classes.blueBox,
+          'flex flex-col justify-center p-4 my-2 text-white'
+        )}
+      >
+        <div className="flex items-center">
+          <div className="flex flex-grow items-center">
+            {addressesInfo[address].name} ({shortedAddress(address)})
+            <Link className="cursor-pointer ml-2" to={`/account/${address}`}>
+              <FontAwesomeIcon icon={editIcon} />
+            </Link>
+          </div>
+          <Tooltip title="Copy" arrow>
+            <div
+              className="cursor-pointer w-7 flex items-center"
+              onClick={copy}
+            >
+              {copied ? (
+                <FontAwesomeIcon
+                  icon={copiedIcon}
+                  className="flex items-center"
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={copyIcon}
+                  className="flex items-center"
+                />
+              )}
+            </div>
+          </Tooltip>
+          <a
+            href={`${
+              !networkConfig ? '' : networkConfig.blockExplorerUrl
+            }/address/${address}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center"
+          >
+            <FontAwesomeIcon icon={shareIcon} />
+          </a>
+        </div>
+
         {!totalUSDBalance ? null : (
-          <Heading>${fmtBig(totalUSDBalance, 1, 2)}</Heading>
+          <div className={clsx(classes.totalUSDBalance, 'font-extrabold')}>
+            ${fmtBig(totalUSDBalance, 1, 2)}
+          </div>
         )}
       </div>
-      <Balances {...{ balances }} />
-      {!Object.keys(unreceived).length ? null : (
-        <>
-          <h4 className="mt-3">UNRECEIVED:</h4>
-          <Balances balances={unreceived} receive />
-        </>
-      )}
+
+      <Box className={clsx('flex justify-center my-2', classes.tabs)}>
+        <NavLink
+          to={'/landing'}
+          className="border-basic-4 border-b-0 px-2 text-basic-5 py-2 border-r"
+          exact
+        >
+          Assets
+        </NavLink>
+        <NavLink
+          to={'/landing/transactions'}
+          className="border-basic-4 border-b-0 px-2 text-basic-5 py-2"
+          exact
+        >
+          Activities
+        </NavLink>
+      </Box>
+
+      <Box className={classes.content}>
+        <Switch>
+          <Route exact path="/landing/transactions" component={Transactions} />
+          <Route exact path="/landing" component={Tokens} />
+        </Switch>
+      </Box>
     </Box>
   );
 }
 
-function Balances({ balances, receive }) {
-  const router = useHistory();
-  const { setError } = useVite();
-
-  const doReceive = async (sendBlockHash) => {
-    try {
-      await send('receiveToken', {
-        sendBlockHash,
-      });
-    } catch (e) {
-      setError(e);
-    }
-  };
-
-  const els = !balances
-    ? []
-    : _flatten(
-        _orderBy(Object.values(balances), 'usd', 'desc').map((balance) => [
-          <img
-            key={`${balance.symbol}-thumbnail`}
-            src={balance.icon}
-            alt={balance.symbol}
-            width={25}
-            height={25}
-          />,
-          <div key={`${balance.symbol}-symbol`}>
-            {fmtBig(balance.balance, Math.pow(10, balance.decimals))}{' '}
-            {balance.symbol.padEnd(6)}
-          </div>,
-          <div key={`${balance.symbol}-value`}>
-            ${fmtBig(balance.usd, 1, 2)}
-          </div>,
-          <Button
-            key={`${balance.symbol}-button`}
-            variant="outlined"
-            size="small"
-            onClick={() =>
-              receive
-                ? doReceive(balance.sendBlockHash)
-                : router.push(
-                    `/${receive ? 'receive' : 'send'}/${balance.symbol}`
-                  )
-            }
-          >
-            {receive ? 'receive' : 'send'}
-          </Button>,
-        ])
-      );
-
-  return <div className="grid items-center text-right mt-2">{els}</div>;
-}
 export default Landing;

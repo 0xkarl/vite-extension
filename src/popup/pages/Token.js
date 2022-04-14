@@ -4,6 +4,7 @@ import Box from '@material-ui/core/Box';
 
 import { useVite } from '../contexts/Vite';
 import { send, subscribe, BORDER_RADIUS } from '../utils';
+import Heading from '../components/shared/Heading';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(() => ({
@@ -21,7 +22,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Transactions() {
+function Token({
+  match: {
+    params: { token },
+  },
+}) {
   const classes = useStyles();
   const { address } = useVite();
   const [transactions, setTransactions] = useState([]);
@@ -33,7 +38,7 @@ function Transactions() {
     subscribeToTransactionChanges();
 
     async function loadTransactions() {
-      const { transactions } = await send('getTransactions');
+      const { transactions } = await send('getTransactions', { token });
       setTransactions(transactions);
     }
 
@@ -47,7 +52,11 @@ function Transactions() {
   }, [address]);
 
   return (
-    <Box className={(classes.container, 'px-4')}>
+    <Box className={classes.container}>
+      <Heading>
+        Token: {token} <a href="#/">✕</a>
+      </Heading>
+
       <div className="flex flex-col">
         {transactions.map((txn) => (
           <a
@@ -76,4 +85,4 @@ function Transactions() {
   );
 }
 
-export default Transactions;
+export default Token;

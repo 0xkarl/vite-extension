@@ -29,7 +29,8 @@
     "quotes": ["warn", "single"],
     "semi": "error",
     "space-before-blocks": ["warn", "always"],
-    "space-before-function-paren": ["off", "never"]
+    "space-before-function-paren": ["off", "never"],
+    "react/prop-types": "off"
   },
   "extends": [
     "eslint:recommended",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 
 import { useVite } from '../contexts/Vite';
-import { send, shortedAddress, fmtBig } from '../utils';
+import { send, shortedAddress } from '../utils';
 import Heading from '../components/shared/Heading';
 import BigNumber from 'bignumber.js';
 
@@ -164,6 +164,7 @@ function Send({
                   href={state.txBlockExplorerUrl}
                   target="_blank"
                   className="text-bold"
+                  rel="noreferrer"
                 >
                   block explorer
                 </a>
@@ -193,6 +194,7 @@ function Send({
                 href={state.txBlockExplorerUrl}
                 target="_blank"
                 className="text-bold"
+                rel="noreferrer"
               >
                 block explorer
               </a>
