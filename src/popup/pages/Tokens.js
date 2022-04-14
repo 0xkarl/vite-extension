@@ -130,7 +130,7 @@ function Balances({ balances, receive }) {
               </span>
               {balance.symbol.padEnd(6)}
             </div>
-            <div className={clsx(classes.assetValue, 'text-gray-700')}>
+            <div className={clsx(classes.assetValue, 'text-gray-500')}>
               ${fmtBig(balance.usd, 1, 2)}
             </div>
           </div>

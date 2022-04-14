@@ -3,7 +3,7 @@ import { BORDER_RADIUS } from './config';
 
 export default createMuiTheme({
   typography: {
-    fontFamily: ['DM Sans', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+    fontFamily: ['Metropolis', 'Helvetica', 'Arial', 'sans-serif'].join(','),
   },
   palette: {
     background: {
