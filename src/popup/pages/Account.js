@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import { useVite } from '../contexts/Vite';
-import { send, getQueryParams, sleep } from '../utils';
+import { send, sleep } from '../utils';
 import Heading from '../components/shared/Heading';
 
 const useStyles = makeStyles(() => ({
@@ -115,7 +115,7 @@ function Account({
           {!exportedPrivateKey ? null : (
             <TextField
               id="password"
-              label={exportedPrivateKey ? 'Export Private Key' : 'Password'}
+              label={'Export Private Key'}
               type="password"
               InputLabelProps={{
                 shrink: true,

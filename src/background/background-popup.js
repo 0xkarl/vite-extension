@@ -289,6 +289,10 @@ export default async ({ name, payload }) => {
     }
 
     case 'getMnemonic': {
+      const { pass } = payload;
+      if (pass !== store.password) {
+        throw new Error('Pass do not match');
+      }
       const { mnemonic } = store;
       return { mnemonic };
     }
