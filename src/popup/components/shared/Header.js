@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
   container: {},
 
   active: {
-    color: 'deepskyblue',
+    color: '#006fe9',
   },
 
   sep: {

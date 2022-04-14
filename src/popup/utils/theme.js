@@ -3,20 +3,20 @@ import { BORDER_RADIUS } from './config';
 
 export default createMuiTheme({
   typography: {
-    fontFamily: ['Helvetica', 'Arial', 'sans-serif'].join(','),
+    fontFamily: ['DM Sans', 'Helvetica', 'Arial', 'sans-serif'].join(','),
   },
-  // palette: {
-  //   background: {
-  //     default: '#141414',
-  //     paper: '#141414',
-  //   },
-  //   primary: {
-  //     main: '#ffffff',
-  //   },
-  //   secondary: {
-  //     main: 'rgb(218, 255, 13)',
-  //   },
-  // },
+  palette: {
+    background: {
+      default: '#fff',
+      paper: '#fff',
+    },
+    primary: {
+      main: '#006fe9',
+    },
+    secondary: {
+      main: '#d70205',
+    },
+  },
   overrides: {
     MuiButton: {
       root: {

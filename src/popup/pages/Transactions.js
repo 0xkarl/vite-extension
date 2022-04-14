@@ -58,7 +58,7 @@ function Transactions() {
           <a
             key={txn.hash}
             href={txn.txBlockExplorerUrl}
-            className={clsx(classes.txn, 'flex flex-grow justify-space py-2')}
+            className={clsx(classes.txn, 'flex flex-grow justify-between py-2')}
             target="_blank"
           >
             <div className="flex flex-col">

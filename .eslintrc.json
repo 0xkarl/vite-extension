@@ -31,7 +31,11 @@
     "space-before-blocks": ["warn", "always"],
     "space-before-function-paren": ["off", "never"]
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended"
+  ],
   "env": {
     "browser": true,
     "commonjs": true,

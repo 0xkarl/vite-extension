@@ -1,8 +1,10 @@
 o?=$(o)
 
 start:
-#	@webpack-dev-server --inline --watch --hot --colors -d --port 7777
 	@webpack -c -w
+
+example:
+	@webpack-dev-server --inline --watch --hot --colors -d --port 7777
 
 build:
 	@rm -rf dist tmp
@@ -26,4 +28,5 @@ release:
 	build \
 	pack \
 	deploy \
-	release
+	release \
+	example

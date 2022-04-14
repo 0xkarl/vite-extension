@@ -11,11 +11,6 @@ export function onConnect(port) {
   }
   PORT = port;
   port.onDisconnect.addListener(onPortDisconnect);
-
-  // port.onMessage.addListener(function (msg) {
-  //   console.log('message recieved' + msg);
-  //   port.postMessage('hi popup.js');
-  // });
 }
 
 function onPortDisconnect() {

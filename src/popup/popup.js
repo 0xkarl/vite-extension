@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,6 +8,8 @@ import App from './components/global/App';
 import { ViteProvider } from './contexts/Vite';
 import theme from './utils/theme';
 import './popup.css';
+
+console.log('x');
 
 render(
   <StrictMode>
