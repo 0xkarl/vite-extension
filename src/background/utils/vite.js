@@ -94,7 +94,8 @@ export function setupBalances() {
 }
 
 async function loadBalances() {
-  unsubscribePort();
+  BALANCE_UNSUBS.forEach((unsub) => unsub());
+  BALANCE_UNSUBS = [];
 
   if (!store.wallet) {
     return;
@@ -219,11 +220,6 @@ async function getBalanceInfo() {
   }
 
   return data[0].result;
-}
-
-export function unsubscribePort() {
-  BALANCE_UNSUBS.forEach((unsub) => unsub());
-  BALANCE_UNSUBS = [];
 }
 
 export const getTokenInfo = async function (tokenAddresses) {

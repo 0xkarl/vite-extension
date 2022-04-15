@@ -64,6 +64,8 @@ function Token({
         <div className="flex justify-center mt-4">
           <Loader text="Loading" />
         </div>
+      ) : !transactions?.length ? (
+        <div className="flex justify-center mt-4">No transactions found.</div>
       ) : (
         <>
           <div className="flex flex-col">

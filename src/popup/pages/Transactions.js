@@ -53,6 +53,8 @@ function Transactions() {
     <div className="flex justify-center mt-4">
       <Loader text="Loading" />
     </div>
+  ) : !transactions?.length ? (
+    <div className="flex justify-center mt-4">No transactions found.</div>
   ) : (
     <Box className={(classes.container, 'px-4')}>
       <div className="flex flex-col">

@@ -1,17 +1,29 @@
 const SUBSCRIBERS = {};
 
-const port = chrome.runtime.connect({
-  name: '--',
-});
+establishConnToBg();
 
-// port.postMessage("Hi BackGround");
-port.onMessage.addListener(function (message) {
-  // console.log('msg %o', message);
+function establishConnToBg() {
+  const port = chrome.runtime.connect({
+    name: Date.now().toString(),
+  });
+
+  port.onDisconnect.addListener(onPortDisconnect);
+
+  port.onMessage.addListener(processSubscriptions);
+
+  async function onPortDisconnect() {
+    port.onMessage.removeListener(processSubscriptions);
+
+    console.log(chrome.runtime.lastError);
+  }
+}
+
+function processSubscriptions(message) {
   const subscribers = SUBSCRIBERS[message.name];
   if (subscribers) {
     subscribers.forEach((fn) => fn(message.data));
   }
-});
+}
 
 export function subscribe(name, fn) {
   SUBSCRIBERS[name] = SUBSCRIBERS[name] || [];
@@ -23,6 +35,9 @@ export function subscribe(name, fn) {
 export function send(name, payload) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ name, payload }, (response) => {
+      if (chrome.runtime.lastError) {
+        return;
+      }
       if (response.error) {
         reject(response.error);
       } else {

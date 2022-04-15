@@ -310,7 +310,7 @@ export default async ({ name, payload }) => {
         amount: toBig(amount).times(Math.pow(10, decimals)).toString(),
         // data,
       });
-      const result = signAndSendBlock(block);
+      const result = await signAndSendBlock(block);
       const hash = result.hash;
       const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
       return { txBlockExplorerUrl, hash };
@@ -325,7 +325,7 @@ export default async ({ name, payload }) => {
         ...params,
         address,
       });
-      const result = signAndSendBlock(block);
+      const result = await signAndSendBlock(block);
       return result;
     }
 

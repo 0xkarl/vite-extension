@@ -29,6 +29,9 @@ stream.on('data', (request) => {
   // relay message to background script
   // relay result to injected script
   chrome.runtime.sendMessage(request, (response) => {
+    if (chrome.runtime.lastError) {
+      return;
+    }
     if (!(response && (response.result || response.error))) {
       return;
     }

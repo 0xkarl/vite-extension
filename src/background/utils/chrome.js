@@ -1,21 +1,17 @@
 import { store } from './store';
-import { unsubscribePort } from './vite';
 
-let PORT;
+const PORTS = new Map([]);
+
 chrome.runtime.onConnect.addListener(onConnect);
 
 export function onConnect(port) {
-  if (PORT) {
-    port.disconnect();
-    port.onDisconnect.removeListener(onPortDisconnect);
-  }
-  PORT = port;
   port.onDisconnect.addListener(onPortDisconnect);
+  PORTS.set(port.name, port);
 }
 
-function onPortDisconnect() {
-  PORT = null;
-  unsubscribePort();
+function onPortDisconnect(port) {
+  port.onDisconnect.removeListener(onPortDisconnect);
+  PORTS.delete(port.name);
 }
 
 export async function broadcastToTabs(method, params) {
@@ -39,8 +35,8 @@ export async function broadcastToTabs(method, params) {
 }
 
 export async function broadcastToPopup(method, params) {
-  if (PORT) {
-    PORT.postMessage({ name: method, data: params });
+  for (const port of PORTS.values()) {
+    port.postMessage({ name: method, data: params });
   }
 }
 
