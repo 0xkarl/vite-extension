@@ -11,11 +11,12 @@ import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 import _flatten from 'lodash/flatten';
 import _orderBy from 'lodash/orderBy';
+import BigNumber from 'bignumber.js';
 
 import { useVite } from '../contexts/Vite';
 import { send, abbrAddress, subscribe } from '../utils';
 import Heading from '../components/shared/Heading';
-import BigNumber from 'bignumber.js';
+import Loader from '../components/shared/Loader';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -218,7 +219,7 @@ function Send() {
                 type="submit"
                 disabled={state.working}
               >
-                Next
+                {state.working ? <Loader text={'Sending'} /> : <>Next</>}
               </Button>
             </Box>
 

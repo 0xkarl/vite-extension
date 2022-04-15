@@ -121,7 +121,7 @@ function Account({
           {!exportedPrivateKey ? null : (
             <TextField
               id="password"
-              label={'Export Private Key'}
+              label={'Private Key'}
               type="password"
               InputLabelProps={{
                 shrink: true,

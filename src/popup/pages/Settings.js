@@ -72,7 +72,7 @@ function Settings() {
               <>
                 <TextField
                   id="password"
-                  label={'Export Mnemonic Phrase'}
+                  label={'Mnemonic Phrase'}
                   type="password"
                   InputLabelProps={{
                     shrink: true,

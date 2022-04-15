@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
 function Tokens() {
   const classes = useStyles();
   const { setError } = useVite();
-  const [{ isLoaded, balances }, _update] = useState({});
+  const [{ balances }, _update] = useState({});
   const update = (a) => _update((b) => ({ ...b, ...a }));
 
   useEffect(() => {
@@ -45,7 +45,6 @@ function Tokens() {
 
     async function loadBalances() {
       update({
-        isLoaded: true,
         ...(await send('getBalances')),
       });
     }
@@ -67,7 +66,7 @@ function Tokens() {
     [balances]
   );
 
-  return !isLoaded ? (
+  return !els.length ? (
     <div className="flex justify-center mt-4">
       <Loader text="Loading" />
     </div>

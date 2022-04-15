@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
 
 import { useVite } from '../contexts/Vite';
 import { send, subscribe, BORDER_RADIUS } from '../utils';
 import Heading from '../components/shared/Heading';
-import clsx from 'clsx';
+import Loader from '../components/shared/Loader';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -30,6 +31,7 @@ function Token({
   const classes = useStyles();
   const { address } = useVite();
   const [transactions, setTransactions] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const unsubs = [];
@@ -40,6 +42,7 @@ function Token({
     async function loadTransactions() {
       const { transactions } = await send('getTransactions', { token });
       setTransactions(transactions);
+      setIsLoaded(true);
     }
 
     function subscribeToTransactionChanges() {
@@ -57,30 +60,42 @@ function Token({
         Token: {token} <a href="#/">✕</a>
       </Heading>
 
-      <div className="flex flex-col">
-        {transactions.map((txn) => (
-          <a
-            key={txn.hash}
-            href={txn.txBlockExplorerUrl}
-            className={clsx(
-              classes.txn,
-              'flex flex-grow justify-between p-2 mb-2 hover:bg-gray-200'
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="flex flex-col">
-              <div className="font-bold">{txn.description}</div>
-              <div className="date">
-                {txn.date ? <div>{txn.date}</div> : <div className="pending" />}
-              </div>
-            </div>
-            <div className="text-right font-bold">
-              {txn.value} {txn.token}
-            </div>
-          </a>
-        ))}
-      </div>
+      {!isLoaded ? (
+        <div className="flex justify-center mt-4">
+          <Loader text="Loading" />
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col">
+            {transactions.map((txn) => (
+              <a
+                key={txn.hash}
+                href={txn.txBlockExplorerUrl}
+                className={clsx(
+                  classes.txn,
+                  'flex flex-grow justify-between p-2 mb-2 hover:bg-gray-200'
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="flex flex-col">
+                  <div className="font-bold">{txn.description}</div>
+                  <div className="date">
+                    {txn.date ? (
+                      <div>{txn.date}</div>
+                    ) : (
+                      <div className="pending" />
+                    )}
+                  </div>
+                </div>
+                <div className="text-right font-bold">
+                  {txn.value} {txn.token}
+                </div>
+              </a>
+            ))}
+          </div>
+        </>
+      )}
     </Box>
   );
 }
