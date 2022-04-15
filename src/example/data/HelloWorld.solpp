@@ -1,10 +1,11 @@
-pragma soliditypp ^0.4.3;
+// SPDX-License-Identifier: MIT
+pragma soliditypp ^0.8.0;
 
 contract HelloWorld {
     event MyLog(address indexed addr, string log);
 
-    onMessage sayHello(address dest) payable {
-        dest.transfer(msg.tokenid, msg.amount);
+    function sayHello(address dest) payable public {
+        payable(dest).transfer(msg.token, msg.value);
         emit MyLog(dest, "Hello! Have some Vite!");
     }
 }

@@ -9,17 +9,10 @@ import _orderBy from 'lodash/orderBy';
 
 import { fmtBig, send, subscribe, BORDER_RADIUS } from '../utils';
 import { useVite } from '../contexts/Vite';
+import Loader from '../components/shared/Loader';
 
 const useStyles = makeStyles(() => ({
   container: {
-    '& h3': {
-      fontSize: 18,
-    },
-
-    '& .grid': {
-      whiteSpace: 'pre',
-    },
-
     '& button': {
       padding: 0,
       width: 50,
@@ -67,7 +60,19 @@ function Tokens() {
     };
   }, []);
 
-  return !isLoaded ? null : (
+  const els = useMemo(
+    () =>
+      !balances
+        ? []
+        : _flatten(_orderBy(Object.values(balances), 'usd', 'desc')),
+    [balances]
+  );
+
+  return !isLoaded ? (
+    <div className="flex justify-center mt-4">
+      <Loader text="Loading" />
+    </div>
+  ) : (
     <Box className={clsx(classes.container, 'flex flex-col')}>
       <Balances {...{ balances }} />
       {!Object.keys(unreceived).length ? null : (
@@ -131,7 +136,7 @@ function Balances({ balances, receive }) {
               {balance.symbol.padEnd(6)}
             </div>
             <div className={clsx(classes.assetValue, 'text-gray-500')}>
-              ${fmtBig(balance.usd, 1, 2)}
+              ${fmtBig(balance.usd ?? 0, 1, 2)}
             </div>
           </div>
           <div className="flex items-center justify-end">
@@ -139,13 +144,15 @@ function Balances({ balances, receive }) {
               key={`${balance.symbol}-button`}
               variant="outlined"
               size="small"
-              onClick={() =>
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 receive
                   ? doReceive(balance.sendBlockHash)
                   : router.push(
                       `/${receive ? 'receive' : 'send'}/${balance.symbol}`
-                    )
-              }
+                    );
+              }}
             >
               {receive ? 'receive' : 'send'}
             </Button>

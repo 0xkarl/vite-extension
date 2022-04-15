@@ -1,11 +1,20 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import clsx from 'clsx';
+
+const useStyles = makeStyles(() => ({
+  container: {
+    fontSize: 20,
+  },
+}));
 
 function Heading({ children }) {
+  const classes = useStyles();
+
   return (
-    <Box mb={2}>
-      <Typography variant="h5">{children}</Typography>
+    <Box mb={2} className={clsx('font-extrabold', classes.container)}>
+      {children}
     </Box>
   );
 }

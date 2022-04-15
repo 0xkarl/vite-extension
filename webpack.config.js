@@ -84,7 +84,7 @@ module.exports = {
 
   devServer: {
     disableHostCheck: true,
-    writeToDisk: true,
+    writeToDisk: false,
     clientLogLevel: 'silent',
   },
 };

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
+import clsx from 'clsx';
 
 import { useVite } from '../contexts/Vite';
 import { send, subscribe, BORDER_RADIUS } from '../utils';
-import clsx from 'clsx';
+import Loader from '../components/shared/Loader';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -25,6 +26,7 @@ function Transactions() {
   const classes = useStyles();
   const { address } = useVite();
   const [transactions, setTransactions] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const unsubs = [];
@@ -33,8 +35,9 @@ function Transactions() {
     subscribeToTransactionChanges();
 
     async function loadTransactions() {
-      const { transactions } = await send('getTransactions');
+      const { transactions } = await send('getTransactions', {});
       setTransactions(transactions);
+      setIsLoaded(true);
     }
 
     function subscribeToTransactionChanges() {
@@ -46,7 +49,11 @@ function Transactions() {
     };
   }, [address]);
 
-  return (
+  return !isLoaded ? (
+    <div className="flex justify-center mt-4">
+      <Loader text="Loading" />
+    </div>
+  ) : (
     <Box className={(classes.container, 'px-4')}>
       <div className="flex flex-col">
         {transactions.map((txn) => (
