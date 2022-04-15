@@ -46,6 +46,11 @@ body {
   letter-spacing: 0.45px;
 }
 
+body,
+#root {
+  height: 100%;
+}
+
 .hidden {
   display: none;
 }

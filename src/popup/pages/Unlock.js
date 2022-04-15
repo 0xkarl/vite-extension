@@ -3,6 +3,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
 
 import { useVite } from '../contexts/Vite';
 import Heading from '../components/shared/Heading';
@@ -32,7 +33,7 @@ function Unlock() {
   }
 
   return (
-    <Box className={classes.container}>
+    <Box className={clsx(classes.container, 'p-4')}>
       <Heading>Unlock account</Heading>
 
       <form {...{ onSubmit }}>

@@ -15,12 +15,11 @@ import Import from '../../pages/Import';
 import Register from '../../pages/Register';
 import AddNetwork from '../../pages/AddNetwork';
 import Token from '../../pages/Token';
+import Welcome from '../../pages/Welcome';
 
 const useStyles = makeStyles(() => ({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: 20,
+    height: '100%',
   },
 }));
 
@@ -36,24 +35,27 @@ function App() {
           <Switch>
             <Route exact path="/register" component={Register} />
             <Route exact path="/import" component={Import} />
-            <Redirect to="/register" />
+            <Route exact path="/" component={Welcome} />
+            <Redirect to="/" />
           </Switch>
         ) : (
           <Unlock />
         )
       ) : (
-        <Switch>
-          <Route exact path="/settings" component={Settings} />
-          <Route exact path="/connect" component={Connect} />
-          <Route exact path="/deposit" component={Deposit} />
-          <Route exact path="/send" component={Send} />
-          <Route exact path="/confirm" component={Confirm} />
-          <Route exact path="/account/:address" component={Account} />
-          <Route exact path="/token/:token" component={Token} />
-          <Route path="/landing" component={Landing} />
-          <Route exact path="/add-network" component={AddNetwork} />
-          <Redirect to="/landing" />
-        </Switch>
+        <div className={'p-4'}>
+          <Switch>
+            <Route exact path="/settings" component={Settings} />
+            <Route exact path="/connect" component={Connect} />
+            <Route exact path="/deposit" component={Deposit} />
+            <Route exact path="/send" component={Send} />
+            <Route exact path="/confirm" component={Confirm} />
+            <Route exact path="/account/:address" component={Account} />
+            <Route exact path="/token/:token" component={Token} />
+            <Route path="/landing" component={Landing} />
+            <Route exact path="/add-network" component={AddNetwork} />
+            <Redirect to="/landing" />
+          </Switch>
+        </div>
       )}
     </div>
   );

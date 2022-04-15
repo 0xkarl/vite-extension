@@ -4,6 +4,7 @@ import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 
 import { useVite } from '../contexts/Vite';
 import Heading from '../components/shared/Heading';
@@ -31,7 +32,7 @@ function Register() {
   };
 
   return (
-    <Box className={classes.container}>
+    <Box className={clsx(classes.container, 'p-4')}>
       <Heading>Register account</Heading>
 
       <form {...{ onSubmit }}>
