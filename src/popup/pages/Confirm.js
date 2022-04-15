@@ -112,7 +112,9 @@ function Confirm() {
 
         <div className="flex mt-3">
           <Button
-            variant="outlined"
+            variant="contained"
+            color="primary"
+            disableElevation
             size="small"
             type="submit"
             disabled={state.working}

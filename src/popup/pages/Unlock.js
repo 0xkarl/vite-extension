@@ -62,9 +62,9 @@ function Unlock() {
           <Button
             variant="contained"
             color="primary"
+            disableElevation
             size="small"
             type="submit"
-            disableElevation
           >
             Unlock
           </Button>
@@ -94,14 +94,7 @@ function Unlock() {
             Make sure to save your current seed phrase to gain control of your
             wallet in the future.
           </Box>
-          <Box className="flex justify-between" mt={2}>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setShowImportWarning(false)}
-            >
-              Cancel
-            </Button>
+          <Box className="grid grid-cols-2 gap-2" mt={2}>
             <Button
               variant="contained"
               size="small"
@@ -110,6 +103,13 @@ function Unlock() {
               disableElevation
             >
               Unlock
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setShowImportWarning(false)}
+            >
+              Cancel
             </Button>
           </Box>
         </Box>

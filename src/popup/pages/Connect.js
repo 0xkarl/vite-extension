@@ -58,7 +58,13 @@ function Connect() {
         <div>Origin: {state.origin}</div>
 
         <Box mt={3}>
-          <Button variant="outlined" size="small" onClick={onConnect}>
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            size="small"
+            onClick={onConnect}
+          >
             Connect
           </Button>
         </Box>

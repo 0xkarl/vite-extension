@@ -30,8 +30,9 @@ const useStyles = makeStyles(() => ({
 function Send() {
   const classes = useStyles();
   const router = useHistory();
-  const { setError } = useVite();
+  const { setError, address, addresses, addressesInfo } = useVite();
   const [token, setToken] = useState('VITE');
+  const [toInput, setToInput] = useState('new');
 
   const [state, _update] = useState({});
   const update = (a) => _update((b) => ({ ...b, ...a }));
@@ -74,7 +75,8 @@ function Send() {
     e.preventDefault();
 
     const { amount } = state;
-    const recipient = e.target.recipient.value;
+    const recipient =
+      toInput === 'new' ? (e.target.recipient.value || '').trim() : toInput;
 
     setError(null);
     update({ working: true });
@@ -166,25 +168,52 @@ function Send() {
             </Box>
           </Box>
 
-          <Box mt={2}>
-            <TextField
-              id="recipient"
-              label="Recipient"
-              type="text"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder="Type address..."
-              fullWidth
-              required
-              autoComplete="off"
-            />
+          <Box mt={2} className="flex flex-col">
+            <Box className="flex items-end">
+              <FormControl fullWidth>
+                <InputLabel id="toInputLabel">To</InputLabel>
+                <Select
+                  name="toInput"
+                  labelId="toInputLabel"
+                  id="toInputSelect"
+                  value={toInput}
+                  onChange={(event) => setToInput(event.target.value)}
+                >
+                  <MenuItem value={'new'} key={'new-x'}>
+                    New
+                  </MenuItem>
+                  {addresses.map((a) => {
+                    const info = addressesInfo[a];
+                    return a === address ? null : (
+                      <MenuItem value={a} key={a}>
+                        {info.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Box>
+
+            {toInput !== 'new' ? null : (
+              <Box mt={2}>
+                <TextField
+                  id="recipient"
+                  type="text"
+                  placeholder="Type address..."
+                  fullWidth
+                  required
+                  autoComplete="off"
+                />
+              </Box>
+            )}
           </Box>
 
           <div className="flex mt-3">
             <Box>
               <Button
-                variant="outlined"
+                variant="contained"
+                color="primary"
+                disableElevation
                 size="small"
                 type="submit"
                 disabled={state.working}
@@ -233,10 +262,16 @@ function Send() {
           </div>
           <div className="mt-2">
             <div className="text-center">
-              Sent {state.amount}
-              {token} to {abbrAddress(state.recipient)}
+              Sent
+              <span className="font-bold ml-1">
+                {state.amount} {token}
+              </span>
+              <span className="ml-1">to</span>
+              <span className="font-bold ml-1">
+                {abbrAddress(state.recipient)}
+              </span>
             </div>
-            <div className="text-center">
+            <Box className="text-center text-primary" my={2}>
               View on&nbsp;
               <a
                 href={state.txBlockExplorerUrl}
@@ -246,16 +281,18 @@ function Send() {
               >
                 block explorer
               </a>
-            </div>
+            </Box>
           </div>
-          <Box mt={2}>
+          <Box>
             <Button
-              variant="outlined"
+              variant="contained"
+              color="primary"
+              disableElevation
               size="small"
               type="button"
               onClick={onGoBack}
             >
-              Finish
+              Close
             </Button>
           </Box>
         </div>

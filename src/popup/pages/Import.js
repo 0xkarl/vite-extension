@@ -76,7 +76,13 @@ function Import() {
         </Box>
 
         <Box className="flex items-center" mt={3}>
-          <Button variant="outlined" size="small" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            size="small"
+            type="submit"
+          >
             Import
           </Button>
           <Box mx={1}>or</Box>

@@ -90,7 +90,13 @@ function AddNetwork() {
         </Box>
 
         <Box mt={2}>
-          <Button variant="outlined" size="small" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            size="small"
+            type="submit"
+          >
             {saved ? 'Added✓' : 'Add'}
           </Button>
         </Box>

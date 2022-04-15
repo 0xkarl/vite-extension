@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: BORDER_RADIUS,
   },
   content: {
-    height: 350,
+    height: 320,
     overflowY: 'auto',
   },
   totalUSDBalance: {
@@ -165,7 +165,7 @@ function Landing() {
         <div className="text-right mr-3">
           <Link
             to="/deposit"
-            className={clsx(classes.action, 'bg-gray-100 p-')}
+            className={clsx(classes.action, 'bg-gray-100 p-2')}
           >
             <FontAwesomeIcon icon={depositIcon} />
           </Link>

@@ -87,7 +87,13 @@ function Settings() {
             </>
           )}
           <Box mt={2}>
-            <Button variant="outlined" size="small" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              disableElevation
+              size="small"
+              type="submit"
+            >
               {copied ? 'Copied✓' : exportedSeed ? 'Copy' : 'Export'}
             </Button>
           </Box>

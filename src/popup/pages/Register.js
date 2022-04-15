@@ -62,7 +62,13 @@ function Register() {
         </Box>
 
         <Box className="flex items-center" mt={3}>
-          <Button variant="outlined" size="small" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            size="small"
+            type="submit"
+          >
             Create account
           </Button>
           <Box mx={1}>or</Box>

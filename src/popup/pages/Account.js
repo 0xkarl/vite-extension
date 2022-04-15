@@ -91,7 +91,13 @@ function Account({
         />
 
         <Box mt={2}>
-          <Button variant="outlined" size="small" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            size="small"
+            type="submit"
+          >
             {saved ? 'Saved✓' : 'Save'}
           </Button>
         </Box>
@@ -128,7 +134,13 @@ function Account({
             />
           )}
           <Box mt={2}>
-            <Button variant="outlined" size="small" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              disableElevation
+              size="small"
+              type="submit"
+            >
               {copied ? 'Copied✓' : exportedPrivateKey ? 'Copy' : 'Export'}
             </Button>
           </Box>
