@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import { useVite } from '../contexts/Vite';
 import { BORDER_RADIUS, send, sleep } from '../utils';
 import Heading from '../components/shared/Heading';
+import useResetPrompt from '../hooks/useResetPrompt';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -18,7 +19,8 @@ const useStyles = makeStyles(() => ({
 
 function Settings() {
   const classes = useStyles();
-  const { logOut, setError } = useVite();
+  const { setError } = useVite();
+  const reset = useResetPrompt();
   const [copied, setCopied] = useState(false);
   const [exportedSeed, setExportedSeed] = useState(null);
 
@@ -45,67 +47,76 @@ function Settings() {
   }
 
   return (
-    <Box className={classes.container}>
-      <Heading>
-        Settings <a href="#/">✕</a>
-      </Heading>
+    <>
+      <Box className={classes.container}>
+        <Heading>
+          Settings <a href="#/">✕</a>
+        </Heading>
 
-      <div className="flex flex-col">
-        <form onSubmit={onExportSeed}>
-          {exportedSeed ? null : (
-            <TextField
-              id="pass"
-              label="Export Mnemonic Phrase"
-              type="password"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder="Enter pass to export..."
-              fullWidth
-              required
-            />
-          )}
-          {!exportedSeed ? null : (
-            <>
+        <div className="flex flex-col">
+          <form onSubmit={onExportSeed}>
+            {exportedSeed ? null : (
               <TextField
-                id="password"
-                label={'Export Mnemonic Phrase'}
+                id="pass"
+                label="Export Mnemonic Phrase"
                 type="password"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                placeholder="Type password..."
+                placeholder="Enter pass to export..."
                 fullWidth
-                multiline
-                disabled
-                defaultValue={exportedSeed}
+                required
               />
-              <Box className={classes.warning} p={2} mt={2}>
-                Do not share this phrase with anyone! These words can be used to
-                steal all of your assets
-              </Box>
-            </>
-          )}
+            )}
+            {!exportedSeed ? null : (
+              <>
+                <TextField
+                  id="password"
+                  label={'Export Mnemonic Phrase'}
+                  type="password"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder="Type password..."
+                  fullWidth
+                  multiline
+                  disabled
+                  defaultValue={exportedSeed}
+                />
+                <Box className={classes.warning} p={2} mt={2}>
+                  Do not share this phrase with anyone! These words can be used
+                  to steal all of your assets
+                </Box>
+              </>
+            )}
+            <Box mt={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                disableElevation
+                size="small"
+                type="submit"
+              >
+                {copied ? 'Copied✓' : exportedSeed ? 'Copy' : 'Export'}
+              </Button>
+            </Box>
+          </form>
+
           <Box mt={2}>
             <Button
-              variant="contained"
-              color="primary"
-              disableElevation
+              variant="outlined"
               size="small"
-              type="submit"
+              fullWidth
+              onClick={reset.prompt}
             >
-              {copied ? 'Copied✓' : exportedSeed ? 'Copy' : 'Export'}
+              Reset wallet
             </Button>
           </Box>
-        </form>
+        </div>
+      </Box>
 
-        <Box mt={2}>
-          <Button variant="outlined" size="small" fullWidth onClick={logOut}>
-            Reset wallet
-          </Button>
-        </Box>
-      </div>
-    </Box>
+      {reset.modal}
+    </>
   );
 }
 

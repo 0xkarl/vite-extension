@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 
 import { useVite } from '../contexts/Vite';
 import Heading from '../components/shared/Heading';
 import { BORDER_RADIUS } from '../utils';
+import useResetPrompt from '../hooks/useResetPrompt';
 
 const useStyles = makeStyles(() => ({
   container: {},
@@ -21,9 +19,8 @@ const useStyles = makeStyles(() => ({
 
 function Unlock() {
   const classes = useStyles();
-  const { setError, unlock, logOut } = useVite();
-  const [showImportWarning, setShowImportWarning] = useState(false);
-  const router = useHistory();
+  const { setError, unlock } = useVite();
+  const reset = useResetPrompt();
 
   function onSubmit(e) {
     e.preventDefault();
@@ -32,14 +29,6 @@ function Unlock() {
 
     setError(null);
     unlock(password);
-  }
-
-  function onImport(e) {
-    e.preventDefault();
-
-    setError(null);
-    logOut();
-    router.push('/import');
   }
 
   return (
@@ -74,46 +63,12 @@ function Unlock() {
       <Box
         mt={2}
         className="text-primary cursor-pointer underline"
-        onClick={() => setShowImportWarning(true)}
+        onClick={reset.prompt}
       >
         Import Using Secret Recovery Phrase
       </Box>
 
-      <Dialog
-        open={showImportWarning}
-        onClose={() => setShowImportWarning(false)}
-      >
-        <Box p={4}>
-          <Typography variant="h6" className="text-center">
-            Resetting Wallet
-          </Typography>
-          <Box mt={1} px={2} py={1} className={classes.warning}>
-            Completing this action will remove all data from your current
-            wallet, including your secret recovery phrase.
-            <br />
-            Make sure to save your current seed phrase to gain control of your
-            wallet in the future.
-          </Box>
-          <Box className="grid grid-cols-2 gap-2" mt={2}>
-            <Button
-              variant="contained"
-              size="small"
-              color="secondary"
-              onClick={onImport}
-              disableElevation
-            >
-              Unlock
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setShowImportWarning(false)}
-            >
-              Cancel
-            </Button>
-          </Box>
-        </Box>
-      </Dialog>
+      {reset.modal}
     </Box>
   );
 }
