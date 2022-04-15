@@ -7,6 +7,7 @@ import Unlock from '../../pages/Unlock';
 import Settings from '../../pages/Settings';
 import Connect from '../../pages/Connect';
 import Send from '../../pages/Send';
+import Deposit from '../../pages/Deposit';
 import Confirm from '../../pages/Confirm';
 import Account from '../../pages/Account';
 import Landing from '../../pages/Landing';
@@ -44,7 +45,8 @@ function App() {
         <Switch>
           <Route exact path="/settings" component={Settings} />
           <Route exact path="/connect" component={Connect} />
-          <Route exact path="/send/:token" component={Send} />
+          <Route exact path="/deposit" component={Deposit} />
+          <Route exact path="/send" component={Send} />
           <Route exact path="/confirm" component={Confirm} />
           <Route exact path="/account/:address" component={Account} />
           <Route exact path="/token/:token" component={Token} />

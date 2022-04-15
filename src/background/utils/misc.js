@@ -1,9 +1,3 @@
-import qs from 'query-string';
-
-export function getQueryParams() {
-  return qs.parse(window.location.search.replace(/^\?/, ''));
-}
-
 export function abbrAddress(address) {
   return `${address.slice(0, 9)}....${address.slice(-4)}`;
 }

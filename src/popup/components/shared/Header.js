@@ -99,7 +99,7 @@ function Header() {
   return (
     <Box className={classes.container}>
       <div className="menu flex flex-col flex-grow mb-2">
-        <div className="flex flex-grow">
+        <div className="flex flex-grow items-center">
           <div className="flex flex-grow">{network}</div>
           <SettingsIcon className="cursor-pointer" onClick={showMenu} />
         </div>

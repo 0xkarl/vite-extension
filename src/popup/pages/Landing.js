@@ -10,6 +10,8 @@ import {
   faCopy as copyIcon,
   faCheck as copiedIcon,
   faArrowUpRightFromSquare as shareIcon,
+  faCreditCard as depositIcon,
+  faPaperPlane as sendIcon,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -17,7 +19,7 @@ import {
   fmtBig,
   send,
   subscribe,
-  shortedAddress,
+  abbrAddress,
   sleep,
 } from '../utils';
 import { useVite } from '../contexts/Vite';
@@ -38,6 +40,10 @@ const useStyles = makeStyles(() => ({
   },
   totalUSDBalance: {
     fontSize: 30,
+  },
+  action: {
+    fontSize: 24,
+    borderRadius: BORDER_RADIUS,
   },
   tabs: {
     '& .active': {
@@ -111,7 +117,7 @@ function Landing() {
       >
         <div className="flex items-center">
           <div className="flex flex-grow items-center">
-            {addressesInfo[address].name} ({shortedAddress(address)})
+            {addressesInfo[address].name} ({abbrAddress(address)})
             <Link className="cursor-pointer ml-2" to={`/account/${address}`}>
               <FontAwesomeIcon icon={editIcon} />
             </Link>
@@ -153,17 +159,37 @@ function Landing() {
         )}
       </div>
 
-      <Box className={clsx('flex justify-center my-2', classes.tabs)}>
+      <div
+        className={clsx('grid grid-cols-2 justify-center my-2 text-primary')}
+      >
+        <div className="text-right mr-3">
+          <Link
+            to="/deposit"
+            className={clsx(classes.action, 'bg-gray-100 p-')}
+          >
+            <FontAwesomeIcon icon={depositIcon} />
+          </Link>
+        </div>
+        <div className="ml-3">
+          <Link to="/send" className={clsx(classes.action, 'bg-gray-100 p-2')}>
+            <FontAwesomeIcon icon={sendIcon} />
+          </Link>
+        </div>
+      </div>
+
+      <Box
+        className={clsx('grid grid-cols-2 justify-center my-2', classes.tabs)}
+      >
         <NavLink
           to={'/landing'}
-          className="border-basic-4 border-b-0 px-2 text-basic-5 py-2 border-r"
+          className="border-basic-4 text-basic-5 py-1 border-r text-right pr-1"
           exact
         >
           Assets
         </NavLink>
         <NavLink
           to={'/landing/transactions'}
-          className="border-basic-4 border-b-0 px-2 text-basic-5 py-2"
+          className="border-basic-4 text-basic-5 py-1 pl-1"
           exact
         >
           Activities

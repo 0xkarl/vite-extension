@@ -1,6 +1,5 @@
 import moment from 'moment';
-// import { HTTP_RPC } from '@vite/vitejs-http';
-// import { ViteAPI } from '@vite/vitejs';
+import { accountBlock, utils } from '@vite/vitejs';
 import './vendor/HTTP.web';
 import './vendor/viteAPI.web';
 
@@ -9,7 +8,7 @@ import { store } from './store';
 import { toBig, fmtBig } from './bn';
 import { cache } from './cache';
 import { broadcastBalancesUpdate } from './chrome';
-import { shortedAddress } from '../../popup/utils';
+import { abbrAddress, sleep } from './misc';
 
 const {
   $vite_HTTP: { HTTP_RPC },
@@ -103,7 +102,6 @@ async function loadBalances() {
 
   store.totalUSDBalance = toBig(0);
   store.balances = [];
-  store.unreceived = [];
 
   updateBalances();
 }
@@ -123,19 +121,16 @@ async function subscribeToBalanceChanges() {
 }
 
 async function updateBalances() {
-  const balanceInfo = await getBalanceInfo();
+  const balance = await getBalanceInfo();
 
-  const received = balanceInfo.balance?.balanceInfoMap ?? {};
+  const received = balance?.balanceInfoMap ?? {};
   Object.entries(DEFAULT_TOKENS).forEach(([defaultTokenId, defaultToken]) => {
     if (!received[defaultTokenId]) {
       received[defaultTokenId] = defaultToken;
     }
   });
 
-  await Promise.all([
-    getBalance('balances', Object.values(received)),
-    getBalance('unreceived', balanceInfo.unreceived),
-  ]);
+  await getBalance(Object.values(received));
 
   store.totalUSDBalance = Object.values(store.balances).reduce(
     (ret, balance) => ret.plus(balance.usd),
@@ -145,7 +140,7 @@ async function updateBalances() {
   broadcastBalancesUpdate();
 }
 
-export async function getBalance(k, balanceInfo) {
+export async function getBalance(balanceInfo) {
   const balances = balanceInfo.reduce((ret, entry) => {
     ret[entry.tokenInfo.tokenSymbol] = {
       balance: toBig(entry.balance ?? entry.amount),
@@ -162,14 +157,23 @@ export async function getBalance(k, balanceInfo) {
   const infos = await getTokenInfo(
     Object.values(balances).map((entry) => entry.tokenId)
   );
-  store[k] = balances;
-  Object.values(store[k]).forEach((balance) => {
-    const { icon, price } = infos[balance.symbol];
+
+  Object.values(balances).forEach((balance) => {
+    let { icon, price } = infos[balance.symbol] ?? { icon: null };
+    if (icon === null) {
+      icon =
+        'https://static.vite.net/token-profile-1257137467/icon/c746e8a95dff8ce193c462554feb61bf.png';
+      if (balance.symbol === 'USDV') {
+        price = toBig(1);
+      }
+    }
     balance.usd = balance.balance
       .dividedBy(Math.pow(10, balance.decimals))
       .multipliedBy(price ?? toBig(0));
     balance.icon = icon;
   });
+
+  store.balances = balances;
 }
 
 async function getBalanceInfo() {
@@ -187,10 +191,7 @@ async function getBalanceInfo() {
   ]);
 
   if (!data || (data instanceof Array && data.length < 2)) {
-    return {
-      balance: null,
-      unreceived: null,
-    };
+    return null;
   }
   if (data[0].error) {
     throw data[0].error;
@@ -199,10 +200,25 @@ async function getBalanceInfo() {
     throw data[1].error;
   }
 
-  return {
-    balance: data[0].result,
-    unreceived: data[1].result,
-  };
+  if (data[1].result.length) {
+    for (let i = 0; i < data[1].result.length; i++) {
+      const { hash: sendBlockHash } = data[1].result[i];
+      const block = accountBlock.createAccountBlock('receive', {
+        address,
+        sendBlockHash,
+      });
+      try {
+        await signAndSendBlock(block);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    await sleep(1000);
+    return await getBalanceInfo();
+  }
+
+  return data[0].result;
 }
 
 export function unsubscribePort() {
@@ -249,8 +265,6 @@ export const getTransactions = async function (token) {
     100
   );
 
-  console.log({ accountBlocks });
-
   if (!accountBlocks) {
     return [];
   }
@@ -282,7 +296,7 @@ export const getTransactions = async function (token) {
       // 7->response(genesis).
 
       case 2: {
-        txn.description = `Sent to ${shortedAddress(toAddress)}`;
+        txn.description = `Sent to ${abbrAddress(toAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
         if (!token || txn.token === token) {
@@ -292,7 +306,7 @@ export const getTransactions = async function (token) {
       }
 
       case 4: {
-        txn.description = `Received from ${shortedAddress(fromAddress)}`;
+        txn.description = `Received from ${abbrAddress(fromAddress)}`;
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
         if (!token || txn.token === token) {
@@ -312,4 +326,45 @@ export async function getTxBlockExplorerUrl(hash, networkId) {
   networkId = networkId || store.network;
   const { blockExplorerUrl } = await getNetwork(networkId);
   return blockExplorerUrl + '/tx/' + hash;
+}
+
+// sign and broadcast an account `block`
+// fallback to pow option if out of quota
+export async function signAndSendBlock(block) {
+  const {
+    wallet: { privateKey },
+    client,
+  } = store;
+
+  block.setProvider(client).setPrivateKey(privateKey);
+  await block.autoSetPreviousAccountBlock();
+
+  // get difficulty
+  const { difficulty } = await client.request('ledger_getPoWDifficulty', {
+    address: block.address,
+    previousHash: block.previousHash,
+    blockType: block.blockType,
+    toAddress: block.toAddress,
+    data: block.data,
+  });
+
+  // if difficulty is null,
+  // it indicates the account has enough quota to send the transaction
+  // there is no need to do PoW
+  if (difficulty) {
+    const getNonceHashBuffer = Buffer.from(
+      block.originalAddress + block.previousHash,
+      'hex'
+    );
+    const getNonceHash = utils.blake2bHex(getNonceHashBuffer, null, 32);
+    const nonce = await client.request(
+      'util_getPoWNonce',
+      difficulty,
+      getNonceHash
+    );
+    block.setDifficulty(difficulty);
+    block.setNonce(nonce);
+  }
+
+  return await block.sign().send();
 }

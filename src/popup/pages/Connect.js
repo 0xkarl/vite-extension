@@ -3,7 +3,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
-import { send, getQueryParams, shortedAddress } from '../utils';
+import { send, getQueryParams, abbrAddress } from '../utils';
 import { useVite } from '../contexts/Vite';
 
 const useStyles = makeStyles(() => ({
@@ -54,7 +54,7 @@ function Connect() {
   return (
     <Box className={classes.container}>
       <div className="flex flex-col">
-        <div>Address: {shortedAddress(address)}</div>
+        <div>Address: {abbrAddress(address)}</div>
         <div>Origin: {state.origin}</div>
 
         <Box mt={3}>

@@ -1,4 +1,4 @@
-import { wallet, accountBlock, utils } from '@vite/vitejs';
+import { wallet, accountBlock } from '@vite/vitejs';
 import pwd from 'browser-passworder';
 import {
   store,
@@ -11,6 +11,7 @@ import {
   getTxBlockExplorerUrl,
   getNetworks,
   uuid,
+  signAndSendBlock,
 } from './utils';
 import { toBig } from '../popup/utils';
 
@@ -198,11 +199,10 @@ export default async ({ name, payload }) => {
     }
 
     case 'getBalances': {
-      const { totalUSDBalance, balances, unreceived } = store;
+      const { totalUSDBalance, balances } = store;
       return {
         totalUSDBalance,
         balances,
-        unreceived,
       };
     }
 
@@ -358,21 +358,6 @@ export default async ({ name, payload }) => {
       return { exportedPrivateKey: privateKey };
     }
 
-    case 'receiveToken': {
-      const {
-        wallet: { address },
-      } = store;
-      const { sendBlockHash } = payload;
-      const block = accountBlock.createAccountBlock('receive', {
-        address,
-        sendBlockHash,
-      });
-      const result = signAndSendBlock(block);
-      const hash = result.hash;
-      const txBlockExplorerUrl = await getTxBlockExplorerUrl(hash);
-      return { txBlockExplorerUrl, hash };
-    }
-
     case 'addNetwork': {
       const networks = (await cache('networks')) || [];
       for (let i = 0; i < networks.length; i++) {
@@ -423,45 +408,4 @@ async function unlock() {
     addresses,
     addressesInfo,
   };
-}
-
-// sign and broadcast an account `block`
-// fallback to pow option if out of quota
-async function signAndSendBlock(block) {
-  const {
-    wallet: { privateKey },
-    client,
-  } = store;
-
-  block.setProvider(client).setPrivateKey(privateKey);
-  await block.autoSetPreviousAccountBlock();
-
-  // get difficulty
-  const { difficulty } = await client.request('ledger_getPoWDifficulty', {
-    address: block.address,
-    previousHash: block.previousHash,
-    blockType: block.blockType,
-    toAddress: block.toAddress,
-    data: block.data,
-  });
-
-  // if difficulty is null,
-  // it indicates the account has enough quota to send the transaction
-  // there is no need to do PoW
-  if (difficulty) {
-    const getNonceHashBuffer = Buffer.from(
-      block.originalAddress + block.previousHash,
-      'hex'
-    );
-    const getNonceHash = utils.blake2bHex(getNonceHashBuffer, null, 32);
-    const nonce = await client.request(
-      'util_getPoWNonce',
-      difficulty,
-      getNonceHash
-    );
-    block.setDifficulty(difficulty);
-    block.setNonce(nonce);
-  }
-
-  return await block.sign().send();
 }

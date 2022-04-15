@@ -9,8 +9,6 @@ import { ViteProvider } from './contexts/Vite';
 import theme from './utils/theme';
 import './popup.css';
 
-console.log('x');
-
 render(
   <StrictMode>
     <ThemeProvider {...{ theme }}>

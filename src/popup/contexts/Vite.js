@@ -19,7 +19,6 @@ export const ViteProvider = ({ children }) => {
     const load = async () => {
       try {
         const state = await send('boot');
-        console.log(state);
         update(state);
       } catch (e) {
         setError(e);
