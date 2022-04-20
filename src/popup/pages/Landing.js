@@ -35,23 +35,37 @@ const useStyles = makeStyles(() => ({
     borderRadius: BORDER_RADIUS,
   },
   content: {
-    height: 320,
+    height: 280,
     overflowY: 'auto',
   },
   totalUSDBalance: {
     fontSize: 30,
   },
   action: {
-    fontSize: 24,
-    borderRadius: BORDER_RADIUS,
+    '& .icon': {
+      borderRadius: BORDER_RADIUS,
+      fontSize: 24,
+    },
   },
   tabs: {
     '& .active': {
-      color: '#006fe9',
       fontWeight: 'bold',
     },
   },
 }));
+
+const ACTIONS = [
+  {
+    link: '/deposit',
+    icon: depositIcon,
+    name: 'Deposit',
+  },
+  {
+    link: '/send',
+    icon: sendIcon,
+    name: 'Send',
+  },
+];
 
 function Landing() {
   const classes = useStyles();
@@ -159,42 +173,42 @@ function Landing() {
         )}
       </div>
 
-      <div
-        className={clsx('grid grid-cols-2 justify-center my-2 text-primary')}
-      >
-        <div className="text-right mr-3">
-          <Link
-            to="/deposit"
-            className={clsx(classes.action, 'bg-gray-100 p-2')}
-          >
-            <FontAwesomeIcon icon={depositIcon} />
-          </Link>
-        </div>
-        <div className="ml-3">
-          <Link to="/send" className={clsx(classes.action, 'bg-gray-100 p-2')}>
-            <FontAwesomeIcon icon={sendIcon} />
-          </Link>
+      <div className="flex justify-center my-2">
+        <div className={clsx('grid grid-cols-2 gap-3')}>
+          {ACTIONS.map((action) => (
+            <div key={action.name}>
+              <Link
+                to={action.link}
+                className={clsx(classes.action, 'flex flex-col items-center')}
+              >
+                <div className="bg-gray-100 px-4 py-2 text-primary mb-2 icon">
+                  <FontAwesomeIcon icon={action.icon} />
+                </div>
+                <div className="font-bold">{action.name}</div>
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
 
-      <Box
-        className={clsx('grid grid-cols-2 justify-center my-2', classes.tabs)}
-      >
-        <NavLink
-          to={'/landing'}
-          className="border-basic-4 text-basic-5 py-1 border-r text-right pr-1"
-          exact
-        >
-          Assets
-        </NavLink>
-        <NavLink
-          to={'/landing/transactions'}
-          className="border-basic-4 text-basic-5 py-1 pl-1"
-          exact
-        >
-          Activities
-        </NavLink>
-      </Box>
+      <div className="flex justify-center my-2">
+        <div className={clsx('grid grid-cols-2', classes.tabs)}>
+          <NavLink
+            to={'/landing'}
+            className="border-basic-4 text-basic-5 border-r text-right pr-1"
+            exact
+          >
+            Assets
+          </NavLink>
+          <NavLink
+            to={'/landing/transactions'}
+            className="border-basic-4 text-basic-5 pl-1"
+            exact
+          >
+            Activities
+          </NavLink>
+        </div>
+      </div>
 
       <Box className={classes.content}>
         <Switch>
