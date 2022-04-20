@@ -1,41 +1,25 @@
 @font-face {
   font-family: Metropolis;
-  src: url(https://raw.githubusercontent.com/lovincyrus/Metropolis/master/Fonts/Webfonts/WOFF2/Metropolis-ExtraLight.woff2)
-    format('woff2');
+  src: url('fonts/WOFF2/Metropolis-ExtraLight.woff2') format('woff2');
   font-weight: 200;
 }
 
 @font-face {
   font-family: Metropolis;
-  src: url(https://raw.githubusercontent.com/lovincyrus/Metropolis/master/Fonts/Webfonts/WOFF2/Metropolis-Regular.woff2)
-    format('woff2');
+  src: url('fonts/WOFF2/Metropolis-Regular.woff2') format('woff2');
   font-weight: 400;
 }
 
 @font-face {
   font-family: Metropolis;
-  src: url(https://raw.githubusercontent.com/lovincyrus/Metropolis/master/Fonts/Webfonts/WOFF2/Metropolis-SemiBold.woff2)
-    format('woff2');
+  src: url('fonts/WOFF2/Metropolis-SemiBold.woff2') format('woff2');
   font-weight: 600;
 }
 
 @font-face {
   font-family: Metropolis;
-  src: url(https://raw.githubusercontent.com/lovincyrus/Metropolis/master/Fonts/Webfonts/WOFF2/Metropolis-Bold.woff2)
-    format('woff2');
+  src: url('fonts/WOFF2/Metropolis-Bold.woff2') format('woff2');
   font-weight: 700;
-}
-
-@font-face {
-  font-family: JetBrains Mono;
-  src: url(https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2)
-      format('woff2'),
-    url(https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff)
-      format('woff'),
-    url(https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/ttf/JetBrainsMono-Regular.ttf)
-      format('truetype');
-  font-weight: 400;
-  font-style: normal;
 }
 
 @tailwind base;
