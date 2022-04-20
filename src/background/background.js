@@ -18,6 +18,9 @@ async function onMessage(message, sender) {
       return await popup(message, sender);
     }
   } catch (error) {
+    if (error.error) {
+      return error;
+    }
     let { code } = error;
     const { message } = error;
     code = code || 400;
