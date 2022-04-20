@@ -17,7 +17,7 @@ function Error() {
   const { error } = useVite();
 
   return !error ? null : (
-    <Box className={classes.container} p={2} mb={2}>
+    <Box className={classes.container} p={2} mx={2} mt={2}>
       {error.message}
     </Box>
   );

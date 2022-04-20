@@ -292,7 +292,8 @@ export const getTransactions = async function (token) {
       // 7->response(genesis).
 
       case 2: {
-        txn.description = `Sent to ${abbrAddress(toAddress)}`;
+        txn.action = 'Sent to';
+        txn.address = abbrAddress(toAddress);
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
         if (!token || txn.token === token) {
@@ -302,7 +303,8 @@ export const getTransactions = async function (token) {
       }
 
       case 4: {
-        txn.description = `Received from ${abbrAddress(fromAddress)}`;
+        txn.action = 'Received from';
+        txn.address = abbrAddress(toAddress);
         txn.value = fmtBig(amount, Math.pow(10, tokenInfo.decimals), 2);
         txn.token = tokenInfo.tokenSymbol;
         if (!token || txn.token === token) {
