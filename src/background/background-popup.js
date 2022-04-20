@@ -282,12 +282,6 @@ export default async ({ name, payload }) => {
       return {};
     }
 
-    case 'getAccountIsConnectedToDomain': {
-      const { origin } = payload;
-      const accounts = await getDomainAccounts(origin);
-      return { connected: !!accounts.length };
-    }
-
     case 'getMnemonic': {
       const { pass } = payload;
       if (pass !== store.password) {

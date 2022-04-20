@@ -65,7 +65,10 @@ const result = await window.vite.request({
 
 ### vite_chainId
 
-Returns the `chainId` of the current network as a hexadecimal. `0x1` (`1`) means mainnet.
+Returns the `chainId` of the current network as a hexadecimal.
+- `0x1` (`1`) means mainnet.
+- `0x2` (`2`) means testnet.
+- `0x3` (`3`) means debug/localnet.
 
 ```js
 const chainIdHex = await window.vite.request({
@@ -74,13 +77,25 @@ const chainIdHex = await window.vite.request({
 console.log(parseInt(chainIdHex)); // 1
 ```
 
-### vite_networkVersion
+## Events
 
-Returns the `networkVersion` of the current network. Always prefer `chainId` above, over `networkVersion`.
+
+### accountsChanged
+
+Triggered when selected account changes.
 
 ```js
-const networkVersion = await window.vite.request({
-  method: 'vite_networkVersion',
+await window.vite.on('accountsChanged', (accounts) => {
+  console.log(accounts); // ['vite_553462bca137bac29f440e9af4ab2e2c1bb82493e41d2bc8b2']
 });
-console.log(networkVersion); // mainnet
+```
+
+### chainChanged
+
+Triggered when current network is changed.
+
+```js
+await window.vite.on('chainChanged', (chainId) => {
+  console.log(parseInt(chainIdHex)); // 1
+});
 ```

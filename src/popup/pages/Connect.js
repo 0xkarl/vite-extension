@@ -24,15 +24,6 @@ function Connect() {
       const state = getQueryParams();
       ['tabId', 'id'].forEach((k) => (state[k] = parseInt(state[k])));
       update(state);
-
-      const { origin } = state;
-      const { connected } = await send('getAccountIsConnectedToDomain', {
-        origin,
-        address,
-      });
-      if (connected) {
-        onConnect();
-      }
     };
     load();
   }, []);

@@ -17,6 +17,9 @@ build:
 deploy:
 	@$(MAKE) build
 
+deploy-docs:
+	@$(MAKE) deploy -C docs
+
 pack:
 	@./node_modules/.bin/web-ext run --source-dir ./dist --target chromium --browser-console --start-url http://localhost:7777/example.html
 
@@ -28,5 +31,6 @@ release:
 	build \
 	pack \
 	deploy \
+	deploy-docs \
 	release \
 	example

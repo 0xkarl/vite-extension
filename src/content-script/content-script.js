@@ -50,6 +50,7 @@ stream.on('data', (request) => {
 // receive messages from injected script and,
 // pipe them to the stream above
 chrome.runtime.onMessage.addListener((message, sender, reply) => {
+  console.log('--><--', message);
   if (message?.target === 'vite-contentscript') {
     stream.write(message.data);
   }

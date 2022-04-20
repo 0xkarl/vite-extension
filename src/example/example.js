@@ -12,7 +12,8 @@ let client,
   accountLabel,
   balanceLabel,
   form,
-  accountAddress;
+  accountAddress,
+  unsubs = [];
 
 window.onload = main;
 
@@ -64,10 +65,13 @@ async function loadAccount(account) {
   connectButton.classList.add('hidden');
 
   await setupClient();
-  subscribeToAccountBalanceChanges(account);
+  window.vite.on('chainChanged', setupClient);
 }
 
 async function setupClient() {
+  unsubs.forEach((u) => u());
+  unsubs = [];
+
   chainId = parseInt(
     await window.vite.request({
       method: 'vite_chainId',
@@ -83,6 +87,7 @@ async function setupClient() {
       : 'http://127.0.0.1:23456'
   );
   client = new ViteAPI(provider);
+  subscribeToAccountBalanceChanges();
 }
 
 async function onSend(e) {
@@ -94,7 +99,7 @@ async function onSend(e) {
   sendBalance(address, amount);
 }
 
-async function subscribeToAccountBalanceChanges(accountAddress) {
+async function subscribeToAccountBalanceChanges() {
   const loadBalance = async () => {
     const balanceInfo = await client.getBalanceInfo(accountAddress);
     const balance = !balanceInfo.balance.balanceInfoMap
@@ -110,6 +115,7 @@ async function subscribeToAccountBalanceChanges(accountAddress) {
     const eventName = 'newAccountBlocks';
     const event = await client.subscribe(eventName);
     event.on(loadBalance);
+    unsubs.push(() => client.unsubscribe(event));
   };
 
   loadBalance();
@@ -123,8 +129,8 @@ async function sendBalance(toAddress, amount) {
     chainId === 1
       ? 'vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3'
       : chainId === 2
-      ? 'vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8'
-      : 'vite_39adf1cfd298a7b73ec44d154d85c8ffd442c597945bac089e';
+      ? 'vite_e1b8547340961a0971573b8467c31fa70af9c1e7576f81eb1a'
+      : 'vite_11f552d518819276128570232d65d6b3f72dc182aa68c5418b';
 
   const result = await window.vite.request({
     method: 'vite_createAccountBlock',

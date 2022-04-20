@@ -21,25 +21,21 @@ export default async (message, sender) => {
         return accounts;
       }
       const tabId = await getActiveTabId();
-      await new Promise((resolve) => {
-        const host = chrome.runtime.getURL('popup.html');
-        const search = qs.stringify({
-          tabId,
-          id,
-          jsonrpc,
-          origin,
-        });
-        const hash = 'connect';
-        chrome.windows.create(
-          {
-            url: `${host}?${search}#${hash}`,
-            width: 357 + 20,
-            height: 600 + 20,
-            type: 'popup',
-            left: 0,
-          },
-          () => resolve()
-        );
+
+      const host = chrome.runtime.getURL('popup.html');
+      const search = qs.stringify({
+        tabId,
+        id,
+        jsonrpc,
+        origin,
+      });
+      const hash = 'connect';
+      await chrome.windows.create({
+        url: `${host}?${search}#${hash}`,
+        width: 357 + 20,
+        height: 600 + 20,
+        type: 'popup',
+        left: 0,
       });
       return null; // noop
     }

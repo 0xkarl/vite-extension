@@ -7,8 +7,9 @@ import * as request from './request';
 import { store } from './store';
 import { toBig, fmtBig } from './bn';
 import { cache } from './cache';
-import { broadcastBalancesUpdate } from './chrome';
+import { broadcastBalancesUpdate, broadcastToTabs } from './chrome';
 import { abbrAddress, sleep } from './misc';
+import { getCurrentNetwork } from './ethereum';
 
 const {
   $vite_HTTP: { HTTP_RPC },
@@ -68,10 +69,12 @@ async function main() {
 }
 
 export async function switchNetwork(networkId) {
-  const { rpcUrl } = await getNetwork(networkId);
+  const network = await getNetwork(networkId);
   store.network = networkId;
-  store.client = new ViteAPI(new HTTP_RPC(rpcUrl));
+  store.client = new ViteAPI(new HTTP_RPC(network.rpcUrl));
   await cache('network', networkId);
+  broadcastToTabs('metamask_chainChanged', await getCurrentNetwork());
+  // broadcastToTabs('metamask_networkVersion', network);
 }
 
 export async function getNetworks() {
@@ -110,7 +113,6 @@ async function loadBalances() {
 async function subscribeToBalanceChanges() {
   const { client } = store;
 
-  const newBlockEvent = 'newAccountBlocks';
   const onBalanceChange = async () => {
     updateBalances();
   };
@@ -118,7 +120,7 @@ async function subscribeToBalanceChanges() {
   const eventName = 'newAccountBlocks';
   const event = await client.subscribe(eventName);
   event.on(onBalanceChange);
-  BALANCE_UNSUBS.push(() => event.off(newBlockEvent, onBalanceChange));
+  BALANCE_UNSUBS.push(() => client.unsubscribe(event));
 }
 
 async function updateBalances() {
@@ -270,7 +272,7 @@ export const getTransactions = async function (token) {
   for (let j = 0; j < accountBlocks.length; j++) {
     const {
       blockType,
-      fromAddress,
+      // fromAddress,
       toAddress,
       amount,
       hash,
