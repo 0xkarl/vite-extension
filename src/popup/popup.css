@@ -30,9 +30,20 @@ body {
   letter-spacing: 0.45px;
 }
 
+html,
 body,
 #root {
   height: 100%;
+}
+
+body.popup {
+  height: 600px;
+  width: 360px;
+}
+
+body:not(.popup) {
+  width: 600px;
+  margin: 0 auto !important;
 }
 
 .hidden {

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 
 import { useVite } from '../contexts/Vite';
 import Heading from '../components/shared/Heading';
@@ -14,11 +14,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Import() {
-  const router = useHistory();
   const classes = useStyles();
   const { setError, importAccount } = useVite();
+  const [done, setDone] = useState(false);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     const mnemonic = (e.target.mnemonic.value || '').trim();
@@ -29,74 +29,95 @@ function Import() {
     if (password !== confirmPassword) {
       return setError(new Error('Passwords do not match.'));
     }
-    importAccount(mnemonic, password);
+
+    await importAccount(mnemonic, password);
+    setDone(true);
+  };
+
+  const onDone = () => {
+    window.close();
   };
 
   return (
     <Box className={clsx(classes.container, 'p-4')}>
-      <Heading>Import account</Heading>
+      <Heading>{done ? <>Success!</> : <>Import account</>}</Heading>
 
-      <form {...{ onSubmit }}>
-        <TextField
-          id="mnemonic"
-          label="Mnemonic"
-          type="text"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          placeholder="Type mnemonic..."
-          fullWidth
-          required
-          multiline
-        />
+      {done ? (
+        <>
+          <div>
+            You can now access the extension in the browser toolbar above.
+          </div>
 
-        <TextField
-          id="password"
-          label="Password"
-          type="password"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          placeholder="Type password..."
-          fullWidth
-          required
-        />
-
-        <Box mt={2}>
+          <div className="flex gap-2 items-center mt-4">
+            <Button
+              variant="contained"
+              color="primary"
+              disableElevation
+              onClick={onDone}
+            >
+              Close
+            </Button>
+          </div>
+        </>
+      ) : (
+        <form {...{ onSubmit }}>
           <TextField
-            id="cpassword"
-            label="Confirm"
+            id="mnemonic"
+            label="Mnemonic"
+            type="text"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            placeholder="Type mnemonic..."
+            fullWidth
+            required
+            multiline
+          />
+
+          <TextField
+            id="password"
+            label="Password"
             type="password"
             InputLabelProps={{
               shrink: true,
             }}
-            placeholder="Confirm password..."
+            placeholder="Type password..."
             fullWidth
             required
           />
-        </Box>
 
-        <Box className="flex items-center" mt={3}>
-          <Button
-            variant="contained"
-            color="primary"
-            disableElevation
-            size="small"
-            type="submit"
-          >
-            Import
-          </Button>
-          <Box mx={1}>or</Box>
-          <Button
-            variant="outlined"
-            size="small"
-            type="button"
-            onClick={() => router.push('/register')}
-          >
-            Create account
-          </Button>
-        </Box>
-      </form>
+          <Box mt={2}>
+            <TextField
+              id="cpassword"
+              label="Confirm"
+              type="password"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder="Confirm password..."
+              fullWidth
+              required
+            />
+          </Box>
+
+          <div className="flex gap-2 items-center mt-4">
+            <Button
+              variant="contained"
+              color="primary"
+              disableElevation
+              type="submit"
+            >
+              Import
+            </Button>
+            <div>or</div>
+            <Link to={'/register'}>
+              <Button variant="outlined" color="default" type="button">
+                Create account
+              </Button>
+            </Link>
+          </div>
+        </form>
+      )}
     </Box>
   );
 }

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 
 import logo from '../images/logo-white@2x.png';
+import { useVite } from '../contexts/Vite';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Welcome() {
   const classes = useStyles();
+  const { openImportPage, openRegisterPage } = useVite();
 
   return (
     <Box
@@ -45,28 +46,26 @@ function Welcome() {
       </Box>
 
       <Box className="grid grid-cols-2 gap-2" mt={3}>
-        <Link to={'/register'}>
-          <Button
-            variant="contained"
-            color="default"
-            disableElevation
-            size="small"
-            fullWidth
-          >
-            Create account
-          </Button>
-        </Link>
-        <Link to={'/import'}>
-          <Button
-            variant="contained"
-            color="default"
-            disableElevation
-            size="small"
-            fullWidth
-          >
-            Import
-          </Button>
-        </Link>
+        <Button
+          variant="contained"
+          color="default"
+          disableElevation
+          size="small"
+          fullWidth
+          onClick={openRegisterPage}
+        >
+          Create account
+        </Button>
+        <Button
+          variant="contained"
+          color="default"
+          disableElevation
+          size="small"
+          fullWidth
+          onClick={openImportPage}
+        >
+          Import
+        </Button>
       </Box>
     </Box>
   );

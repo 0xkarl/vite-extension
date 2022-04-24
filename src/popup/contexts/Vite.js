@@ -4,6 +4,7 @@ import { send } from '../utils';
 export const ViteContext = createContext(null);
 
 export const ViteProvider = ({ children }) => {
+  const [error, setError] = useState(null);
   const [state, _update] = useState({
     error: null,
     locked: true,
@@ -12,7 +13,6 @@ export const ViteProvider = ({ children }) => {
     addressesInfo: {},
     currentAccountIndex: null,
   });
-  const [error, setError] = useState(null);
   const update = (a) => _update((b) => ({ ...b, ...a }));
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const ViteProvider = ({ children }) => {
 
   async function register(password) {
     try {
-      update(await send('register', { password }));
+      return await send('register', { password });
     } catch (e) {
       setError(e);
     }
@@ -47,7 +47,7 @@ export const ViteProvider = ({ children }) => {
 
   async function importAccount(mnemonic, password) {
     try {
-      update(await send('importAccount', { mnemonic, password }));
+      return await send('importAccount', { mnemonic, password });
     } catch (e) {
       setError(e);
     }
@@ -101,6 +101,26 @@ export const ViteProvider = ({ children }) => {
     }
   }
 
+  async function openPage({ route, queryString }) {
+    let extensionURL = chrome.runtime.getURL('popup.html');
+    if (route) {
+      extensionURL += `#${route}`;
+    }
+    if (queryString) {
+      extensionURL += `?${queryString}`;
+    }
+    await chrome.tabs.create({ url: extensionURL });
+    window.close();
+  }
+
+  async function openImportPage() {
+    await openPage({ route: 'import' });
+  }
+
+  async function openRegisterPage() {
+    await openPage({ route: 'register' });
+  }
+
   return (
     <ViteContext.Provider
       value={{
@@ -116,6 +136,8 @@ export const ViteProvider = ({ children }) => {
         switchAccount,
         saveAccountName,
         addNetwork,
+        openImportPage,
+        openRegisterPage,
       }}
     >
       {children}

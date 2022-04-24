@@ -6,6 +6,9 @@ import {
   getCurrentNetwork,
 } from './utils';
 
+const NOTIFICATION_HEIGHT = 600;
+const NOTIFICATION_WIDTH = 360;
+
 export default async (message, sender) => {
   const { origin } = sender;
   const { id, jsonrpc, method, params = [] } = message.data;
@@ -21,7 +24,6 @@ export default async (message, sender) => {
         return accounts;
       }
       const tabId = await getActiveTabId();
-
       const host = chrome.runtime.getURL('popup.html');
       const search = qs.stringify({
         tabId,
@@ -30,13 +32,7 @@ export default async (message, sender) => {
         origin,
       });
       const hash = 'connect';
-      await chrome.windows.create({
-        url: `${host}?${search}#${hash}`,
-        width: 357 + 20,
-        height: 600 + 20,
-        type: 'popup',
-        left: 0,
-      });
+      await openPopup(`${host}?${search}#${hash}`);
       return null; // noop
     }
 
@@ -54,29 +50,16 @@ export default async (message, sender) => {
       const tx = params;
 
       const tabId = await getActiveTabId();
-
-      await new Promise((resolve) => {
-        const host = chrome.runtime.getURL('popup.html');
-        const search = qs.stringify({
-          tabId,
-          id,
-          jsonrpc,
-          origin,
-          ...tx,
-        });
-
-        const hash = 'confirm';
-        chrome.windows.create(
-          {
-            url: `${host}?${search}#${hash}`,
-            width: 357 + 20,
-            height: 600 + 20,
-            type: 'popup',
-            left: 0,
-          },
-          () => resolve()
-        );
+      const host = chrome.runtime.getURL('popup.html');
+      const search = qs.stringify({
+        tabId,
+        id,
+        jsonrpc,
+        origin,
+        ...tx,
       });
+      const hash = 'confirm';
+      await openPopup(`${host}?${search}#${hash}`);
       return null; // noop
     }
 
@@ -98,3 +81,16 @@ export default async (message, sender) => {
       return await store.provider.send(method, params);
   }
 };
+
+async function openPopup(url) {
+  const lastFocused = await chrome.windows.getCurrent();
+
+  await chrome.windows.create({
+    url,
+    type: 'popup',
+    width: NOTIFICATION_WIDTH,
+    height: NOTIFICATION_HEIGHT,
+    top: lastFocused.top,
+    left: lastFocused.left + (lastFocused.width - NOTIFICATION_WIDTH),
+  });
+}

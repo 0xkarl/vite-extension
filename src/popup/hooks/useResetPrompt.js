@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
@@ -18,17 +17,15 @@ const useStyles = makeStyles(() => ({
 
 const useResetPrompt = () => {
   const classes = useStyles();
-  const router = useHistory();
-  const { logOut, setError } = useVite();
+  const { openImportPage, setError, logOut } = useVite();
 
   const [show, setShow] = useState(false);
 
-  function onImport(e) {
+  async function onReset(e) {
     e.preventDefault();
-
     setError(null);
-    logOut();
-    router.push('/import');
+    await logOut();
+    openImportPage();
   }
 
   const modal = useMemo(
@@ -50,10 +47,10 @@ const useResetPrompt = () => {
               variant="contained"
               size="small"
               color="secondary"
-              onClick={onImport}
+              onClick={onReset}
               disableElevation
             >
-              Unlock
+              Reset
             </Button>
             <Button
               variant="outlined"

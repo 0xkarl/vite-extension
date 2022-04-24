@@ -76,10 +76,7 @@ export default async ({ name, payload }) => {
       setupBalances();
 
       return {
-        locked: store.locked,
-        address: store.wallet.address,
-        addresses,
-        addressesInfo,
+        mnemonic,
       };
     }
 

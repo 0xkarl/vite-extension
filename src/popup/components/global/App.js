@@ -16,6 +16,8 @@ import Register from '../../pages/Register';
 import AddNetwork from '../../pages/AddNetwork';
 import Token from '../../pages/Token';
 import Welcome from '../../pages/Welcome';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -26,6 +28,23 @@ const useStyles = makeStyles(() => ({
 function App() {
   const classes = useStyles();
   const { isReady, locked, address } = useVite();
+  const { search } = useLocation();
+
+  useEffect(() => {
+    const { search, hash } = window.location;
+    if (
+      !(
+        ~search.search('origin') ||
+        ~hash.search('/import') ||
+        ~hash.search('/register')
+      )
+    ) {
+      document.body.classList.add('popup');
+    }
+    return () => {
+      document.body.classList.remove('popup');
+    };
+  }, [search]);
 
   return !isReady ? null : (
     <div className={classes.container}>
