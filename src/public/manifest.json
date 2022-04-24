@@ -6,7 +6,15 @@
   "description": "Unofficial Vite blockchain wallet",
   "short_name": "vite",
   "icons": {
-    "80": "images/vite_80.png"
+    "16": "images/icon-16.png",
+    "19": "images/icon-19.png",
+    "32": "images/icon-32.png",
+    "38": "images/icon-38.png",
+    "48": "images/icon-48.png",
+    "64": "images/icon-64.png",
+    "96": "images/icon-96.png",
+    "128": "images/icon-128.png",
+    "512": "images/icon-512.png"
   },
   "permissions": [
     "storage"
@@ -38,10 +46,14 @@
   },
   "action": {
     "default_icon": {
-      "20": "images/vite_20.png",
-      "40": "images/vite_40.png",
-      "60": "images/vite_60.png",
-      "80": "images/vite_80.png"
+      "16": "images/icon-16.png",
+      "19": "images/icon-19.png",
+      "32": "images/icon-32.png",
+      "38": "images/icon-38.png",
+      "64": "images/icon-64.png",
+      "96": "images/icon-96.png",
+      "128": "images/icon-128.png",
+      "512": "images/icon-512.png"
     },
     "default_title": "Vite",
     "default_popup": "popup.html"
