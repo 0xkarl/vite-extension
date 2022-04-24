@@ -1,9 +1,12 @@
 # Vite Extension
 
 <div>
-    <img src="https://vite-extension.surge.sh/screenshot.png" alt="vite" width=300 />
+    <img src="https://vite-extension.surge.sh/screenshot.png" alt="vite" width=500 />
 </div>
 
+## Chrome store
+
+You can download the latest stable version from the [chrome store](https://chrome.google.com/webstore/detail/vite-wallet/fiehfolhefpnoihmfggndpmibfgbpico).
 ## Getting started
 
 This guide will take you through setting up the extension in a local environment.
@@ -82,3 +85,4 @@ https://0xkarl.github.io/vite-extension/getting-started/introduction.html
 - https://docs.vite.org/go-vite/tutorial/sppguide/introduction/installation.html
 - https://docs.vite.org/vite.js/accountBlock/createAccountBlock.html
 - https://github.com/vitelabs/vite.js/blob/fa6109936891697dd44926e52c69930a4e0040fe/docs/viteAPI/GViteRPC.md
+- https://chrome.google.com/webstore/detail/vite-wallet/fiehfolhefpnoihmfggndpmibfgbpico
