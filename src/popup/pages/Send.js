@@ -14,7 +14,7 @@ import _orderBy from 'lodash/orderBy';
 import BigNumber from 'bignumber.js';
 
 import { useVite } from '../contexts/Vite';
-import { send, abbrAddress, subscribe } from '../utils';
+import { send, abbrAddress, subscribe, fmtBig } from '../utils';
 import Heading from '../components/shared/Heading';
 import Loader from '../components/shared/Loader';
 
@@ -35,7 +35,9 @@ function Send() {
   const [token, setToken] = useState('VITE');
   const [toInput, setToInput] = useState('new');
 
-  const [state, _update] = useState({});
+  const [state, _update] = useState({
+    amount: '',
+  });
   const update = (a) => _update((b) => ({ ...b, ...a }));
 
   const balances = useMemo(
@@ -45,6 +47,15 @@ function Send() {
         : _flatten(_orderBy(Object.values(state.balances), 'usd', 'desc')),
     [state]
   );
+
+  const amountInputLabel = useMemo(() => {
+    const balance = state.balances && state.balances[token];
+    return `Amount${
+      !balance
+        ? ''
+        : ` (${fmtBig(balance.balance, Math.pow(10, balance.decimals), 2)})`
+    }`;
+  }, [state.balances, token]);
 
   useEffect(() => {
     const unsubs = [];
@@ -135,7 +146,9 @@ function Send() {
               >
                 {balances.map((balance) => (
                   <MenuItem value={balance.symbol} key={balance.symbol}>
-                    {balance.symbol}
+                    {balance.symbol} (
+                    {fmtBig(balance.balance, Math.pow(10, balance.decimals), 2)}
+                    )
                   </MenuItem>
                 ))}
               </Select>
@@ -145,7 +158,7 @@ function Send() {
           <Box mt={2} className="flex items-end">
             <TextField
               id="amount"
-              label="Amount"
+              label={amountInputLabel}
               type="number"
               InputLabelProps={{
                 shrink: true,
