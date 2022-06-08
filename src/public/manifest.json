@@ -1,6 +1,6 @@
 {
   "name": "Volt Wallet",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "manifest_version": 3,
   "author": "Karl Schwtz <karl.schwtz@gmail.com>",
   "description": "Unofficial Vite blockchain wallet",
