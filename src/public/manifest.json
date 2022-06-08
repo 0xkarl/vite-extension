@@ -1,10 +1,10 @@
 {
-  "name": "Vite Wallet",
+  "name": "Volt Wallet",
   "version": "0.2.4",
   "manifest_version": 3,
   "author": "Karl Schwtz <karl.schwtz@gmail.com>",
   "description": "Unofficial Vite blockchain wallet",
-  "short_name": "vite",
+  "short_name": "volt",
   "icons": {
     "16": "images/icon-16.png",
     "19": "images/icon-19.png",

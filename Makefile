@@ -10,9 +10,9 @@ build:
 	@rm -rf dist tmp
 	@mkdir tmp
 	@webpack -c --mode production
-	@cp -r dist tmp/vite-extension
-	@cd tmp/vite-extension && zip -x *.DS_Store -r ../vite-extension.zip *
-	@surge -d vite-extension.surge.sh dist
+	@cp -r dist tmp/volt-wallet
+	@cd tmp/volt-wallet && zip -x *.DS_Store -r ../volt-wallet.zip *
+	@surge -d volt-wallet.surge.sh dist
 
 deploy:
 	@$(MAKE) build

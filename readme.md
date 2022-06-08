@@ -1,7 +1,7 @@
-# Vite Extension
+# Volt Wallet
 
 <div>
-    <img src="https://vite-extension.surge.sh/screenshot.png" alt="vite" width=500 />
+    <img src="https://volt-wallet.surge.sh/screenshot.png" alt="vite" width=500 />
 </div>
 
 ## Chrome store
@@ -71,7 +71,7 @@ To install a production ready build:
 
 ## Demo dapp & contract
 
-- https://vite-extension.surge.sh/example.html
+- https://volt-wallet.surge.sh/example.html
 - contracts:
   - mainnet: vite_06b7688d6a6c11f60a03aac65c1b8647de73058caa8f2cbcb3
   - testnet: vite_16f90e1b0c1631bbf72481f34c7f63bc531509590823dad3e8
