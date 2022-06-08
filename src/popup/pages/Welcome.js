@@ -38,7 +38,7 @@ function Welcome() {
         <img src={logo} alt={'logo'} width={170} />
 
         <div className={clsx(classes.heading, 'my-2 font-extrabold')}>
-          Vite Wallet
+          Volt Wallet
         </div>
         <div className={clsx(classes.subheading, 'my-2 font-semibold')}>
           Unofficial wallet for Vite blockchain
