@@ -19,7 +19,7 @@ function Step2Save({ nextStep, mnemonic, generate }) {
             <div className={'grid grid-cols-3 gap-4 flex-grow'}>
               {mnemonic.map(({ word, index }) => {
                 return (
-                  <Badge key={word} badgeContent={index + 1} color="primary">
+                  <Badge key={index} badgeContent={index + 1} color="primary">
                     <Button
                       variant="outlined"
                       fullWidth
