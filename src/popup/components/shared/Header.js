@@ -10,11 +10,11 @@ import { useHistory } from 'react-router-dom';
 import { send } from '../../utils';
 import { useVite } from '../../contexts/Vite';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {},
 
   active: {
-    color: '#006fe9',
+    color: theme.palette.primary.main,
   },
 
   sep: {

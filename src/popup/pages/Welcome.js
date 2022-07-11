@@ -4,22 +4,17 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 
-import logo from '../images/logo-white@2x.png';
+import logo from '../images/logo.png';
 import { useVite } from '../contexts/Vite';
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    background: theme.palette.primary.main,
-    color: 'white',
-    '& button': {
-      background: 'white',
-    },
-  },
+  container: {},
   heading: {
     fontSize: 30,
+    color: theme.palette.primary.main,
   },
   subheading: {
-    fontSize: 16,
+    fontSize: 15,
   },
 }));
 
@@ -41,7 +36,7 @@ function Welcome() {
           Volt Wallet
         </div>
         <div className={clsx(classes.subheading, 'my-2 font-semibold')}>
-          Unofficial wallet for Vite blockchain
+          Elegant wallet for the Vite ecosystem
         </div>
       </Box>
 

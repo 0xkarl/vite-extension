@@ -79,7 +79,7 @@ function Tokens() {
             key={balance.symbol}
             className={clsx(
               classes.tokenRow,
-              'flex items-center p-2 mb-2 hover:bg-gray-200'
+              'flex items-center p-2 mb-2 hover:opacity-80'
             )}
           >
             <img

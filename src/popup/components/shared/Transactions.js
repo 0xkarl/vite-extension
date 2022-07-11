@@ -62,7 +62,7 @@ const Transactions = ({ token }) => {
             href={txn.txBlockExplorerUrl}
             className={clsx(
               classes.txn,
-              'flex flex-grow justify-between p-2 mb-2 hover:bg-gray-200'
+              'flex flex-grow justify-between p-2 mb-2 hover:opacity-80'
             )}
             target="_blank"
             rel="noreferrer"

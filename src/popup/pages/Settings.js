@@ -9,10 +9,11 @@ import { BORDER_RADIUS, send, sleep } from '../utils';
 import Heading from '../components/shared/Heading';
 import useResetPrompt from '../hooks/useResetPrompt';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {},
   warning: {
-    background: '#ffd9db',
+    background: theme.palette.secondary.main,
+    color: 'black',
     borderRadius: BORDER_RADIUS,
   },
 }));

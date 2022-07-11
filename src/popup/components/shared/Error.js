@@ -5,9 +5,10 @@ import Box from '@material-ui/core/Box';
 import { useVite } from '../../contexts/Vite';
 import { BORDER_RADIUS } from '../../utils';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
-    background: '#ffd9db',
+    background: theme.palette.secondary.main,
+    color: 'black',
     borderRadius: BORDER_RADIUS,
   },
 }));

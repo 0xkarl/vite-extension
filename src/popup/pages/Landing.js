@@ -27,11 +27,12 @@ import Header from '../components/shared/Header';
 import Tokens from './Tokens';
 import Transactions from './Transactions';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {},
   blueBox: {
-    boxShadow: 'rgb(197 206 224) 0px 12px 20px -4px',
-    backgroundImage: 'linear-gradient(256.28deg, #1c94f4 0%, #1273ea 100%)',
+    color: 'black',
+    boxShadow: '#4b3838 0px 9px 10px -4px',
+    backgroundImage: 'linear-gradient(256.28deg, #e0c1ae 0%, #ff8f8f 100%)',
     borderRadius: BORDER_RADIUS,
   },
   content: {
@@ -44,6 +45,8 @@ const useStyles = makeStyles(() => ({
   action: {
     '& .icon': {
       borderRadius: BORDER_RADIUS,
+      background: theme.palette.primary.main,
+      color: 'black',
       fontSize: 24,
     },
   },
@@ -181,7 +184,7 @@ function Landing() {
                 to={action.link}
                 className={clsx(classes.action, 'flex flex-col items-center')}
               >
-                <div className="bg-gray-100 px-4 py-2 text-primary mb-2 icon">
+                <div className="px-4 py-2 text-primary mb-2 icon">
                   <FontAwesomeIcon icon={action.icon} />
                 </div>
                 <div className="font-bold">{action.name}</div>

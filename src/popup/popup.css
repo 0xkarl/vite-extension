@@ -80,15 +80,55 @@ body:not(.popup) {
   cursor: pointer;
 }
 
-.text-blue,
 .text-primary {
-  color: #006fe9;
+  color: #ff8f8f;
 }
 
-.text-red {
-  color: #e42f34;
+:root {
+  --pink: #ff8f8f;
+  --gray: #555;
+  --blue: #888;
+
+  scrollbar-face-color: var(--pink);
+  scrollbar-base-color: var(--pink);
+  scrollbar-3dlight-color: var(--pink);
+  scrollbar-highlight-color: var(--pink);
+  scrollbar-track-color: var(--blue);
+  scrollbar-arrow-color: var(--blue);
+  scrollbar-shadow-color: var(--pink);
+  scrollbar-dark-shadow-color: var(--pink);
 }
 
-.text-green {
-  color: #00c9a7;
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.1875rem;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 3.125rem;
+  border-radius: 0.1875rem;
+}
+
+::-webkit-scrollbar-button {
+  background-color: var(--blue);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--pink);
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: var(--blue);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gray);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--pink);
+}
+
+::-webkit-resizer {
+  background-color: var(--gray);
 }

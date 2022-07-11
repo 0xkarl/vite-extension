@@ -8,9 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import { useVite } from '../contexts/Vite';
 import { BORDER_RADIUS } from '../utils';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   warning: {
-    background: '#ffd9db',
+    background: theme.palette.secondary.main,
+    color: 'black',
     borderRadius: BORDER_RADIUS,
   },
 }));

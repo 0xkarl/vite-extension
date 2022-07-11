@@ -6,12 +6,13 @@ export default createMuiTheme({
     fontFamily: ['Metropolis', 'Helvetica', 'Arial', 'sans-serif'].join(','),
   },
   palette: {
+    type: 'dark',
     background: {
-      default: '#fff',
-      paper: '#fff',
+      default: '#000000',
+      paper: '#111111',
     },
     primary: {
-      main: '#006fe9',
+      main: '#ff8f8f',
     },
     secondary: {
       main: '#e42f34',
