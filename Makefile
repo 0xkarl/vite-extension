@@ -24,7 +24,10 @@ pack:
 	@./node_modules/.bin/web-ext run --source-dir ./dist --target chromium --browser-console --start-url http://localhost:7777/example.html
 
 release:
-	@./bin/release.sh $o
+	@./bin/$@.sh $o
+
+icons:
+	@node ./bin/$@.js
 
 .PHONY: \
 	start \
@@ -33,4 +36,5 @@ release:
 	deploy \
 	deploy-docs \
 	release \
-	example
+	example \
+	icons

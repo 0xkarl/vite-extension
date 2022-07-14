@@ -1,3 +1,5 @@
+#!/bin/bash
+
 RELEASE=$1
 echo "release: $RELEASE"
 RELEASE=$RELEASE node ./bin/release.js
